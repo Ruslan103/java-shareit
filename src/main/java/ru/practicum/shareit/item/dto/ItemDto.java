@@ -2,7 +2,10 @@ package ru.practicum.shareit.item.dto;
 
 import lombok.Builder;
 import lombok.Data;
-import ru.practicum.shareit.request.ItemRequest;
+import org.springframework.lang.NonNull;
+
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
 
 /**
  * TODO Sprint add-controllers.
@@ -12,8 +15,10 @@ import ru.practicum.shareit.request.ItemRequest;
 public class ItemDto {
     private long id;
     private String name;
+    @NonNull
     private String description;
-    private boolean available;
-    private String owner;
-    private Long request;
+    @NonNull
+    private Boolean available;
+    private String owner; // владелец вещи
+    private Long request; // если вещь была создана по запросу другого пользователя, то в этом поле будет храниться ссылка на соответствующий запрос.
 }
