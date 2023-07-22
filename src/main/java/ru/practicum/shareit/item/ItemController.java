@@ -22,13 +22,13 @@ public class ItemController {
     }
 
     @PatchMapping("{itemId}")
-    public void updateItem(@RequestHeader("X-Sharer-User-Id") long id, @RequestBody ItemDto itemDto) {
-        itemService.updateItem(id, itemDto);
+    public ItemDto updateItem(@RequestHeader("X-Sharer-User-Id") long userId, @PathVariable long itemId, @RequestBody ItemDto itemDto) {
+       return itemService.updateItem(userId, itemId, itemDto);
     }
 
     @GetMapping("{itemId}")
-    public ItemDto getItemById(@PathVariable long id) {
-        return itemService.getItemById(id);
+    public ItemDto getItemById(@PathVariable long itemId) {
+        return itemService.getItemById(itemId);
     }
 
     @GetMapping
@@ -36,8 +36,8 @@ public class ItemController {
         return itemService.getItems(userId);
     }
 
-    @GetMapping("search?text={text}")
-    public List<ItemDto> getItemsByDescription(@PathVariable String text) {
+    @GetMapping("search")
+    public List<ItemDto> getItemsByDescription(@RequestParam (value = "text", defaultValue = "") String text) {
         return itemService.getItemsByDescription(text);
     }
 }

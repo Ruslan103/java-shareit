@@ -14,12 +14,12 @@ public class ErrorHandler {
     }
     @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND) //404
-    public ErrorResponse handleUserNotFoundException(final UserByIdNotFoundException e) {
+    public ErrorResponse handleUserNotFoundException(final NotFoundByIdException e) {
         return new ErrorResponse(e.getMessage());
     }
     @ExceptionHandler
-    @ResponseStatus(HttpStatus.BAD_REQUEST) //404
-    public ErrorResponse handleAvailableNullException(final LineNotNullException e) {
+    @ResponseStatus(HttpStatus.BAD_REQUEST) //400
+    public ErrorResponse handleLineNotNullException(final LineNotNullException e) {
         return new ErrorResponse(e.getMessage());
     }
 }

@@ -15,9 +15,7 @@ import javax.validation.constraints.NotEmpty;
 public class ItemDto {
     private long id;
     private String name;
-    @NonNull
     private String description;
-    @NonNull
     private Boolean available;
     private String owner; // владелец вещи
     private Long request; // если вещь была создана по запросу другого пользователя, то в этом поле будет храниться ссылка на соответствующий запрос.
