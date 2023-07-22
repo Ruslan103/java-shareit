@@ -19,7 +19,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User updateUser(long userId, User user) {
-       return userStorage.updateUser(userId, user);
+        return userStorage.updateUser(userId, user);
     }
 
     @Override

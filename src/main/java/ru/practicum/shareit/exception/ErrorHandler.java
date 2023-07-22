@@ -12,11 +12,13 @@ public class ErrorHandler {
     public ErrorResponse handleInvalidEmailException(final InvalidEmailException e) {
         return new ErrorResponse(e.getMessage());
     }
+
     @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND) //404
     public ErrorResponse handleUserNotFoundException(final NotFoundByIdException e) {
         return new ErrorResponse(e.getMessage());
     }
+
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST) //400
     public ErrorResponse handleLineNotNullException(final LineNotNullException e) {

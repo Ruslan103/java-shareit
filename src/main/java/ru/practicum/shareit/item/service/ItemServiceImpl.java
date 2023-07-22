@@ -17,7 +17,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     public ItemDto updateItem(long userId, long itemId, ItemDto itemDto) {
-       return itemStorage.updateItem(userId, itemId, itemDto);
+        return itemStorage.updateItem(userId, itemId, itemDto);
     }
 
     public ItemDto getItemById(long id) {

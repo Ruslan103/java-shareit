@@ -5,13 +5,14 @@ import org.springframework.stereotype.Repository;
 import ru.practicum.shareit.exception.InvalidEmailException;
 
 import javax.validation.ValidationException;
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Objects;
 
 @Repository
 @Qualifier("userDbStorage")
 public class UserDbStorage implements UserStorage {
     HashMap<Long, User> users = new HashMap<>();
-  //  List<String> emails = new ArrayList<>();
     long id;
 
     @Override
@@ -22,7 +23,6 @@ public class UserDbStorage implements UserStorage {
         if (user.getEmail() == null || !user.getEmail().contains("@")) {
             throw new InvalidEmailException("Неверный Email"); // 400
         }
-      //  emails.add(user.getEmail());
         id++;
         user.setId(id);
         users.put(id, user);
@@ -32,19 +32,16 @@ public class UserDbStorage implements UserStorage {
     @Override
     public User updateUser(long userId, User user) {
         User oldUser = users.get(userId);
-        for (User newUser:users.values()){
-            if (Objects.equals(newUser.getEmail(), user.getEmail()) &&newUser.getId()!=userId) {
+        for (User newUser : users.values()) {
+            if (Objects.equals(newUser.getEmail(), user.getEmail()) && newUser.getId() != userId) {
                 throw new ValidationException("Пользователь с таким Email уже существует"); //500
             }
         }
 
 
-
         if (user.getEmail() == null) {
             user.setEmail(oldUser.getEmail());
         }
-//        else {emails.remove(oldUser.getEmail());
-//        emails.add(user.getEmail());}
         if (user.getName() == null) {
             user.setName(oldUser.getName());
         }
@@ -55,7 +52,6 @@ public class UserDbStorage implements UserStorage {
 
     @Override
     public void deleteUser(long userId) {
-    //    emails.remove(getUserById(userId).getEmail());
         users.remove(userId);
     }
 

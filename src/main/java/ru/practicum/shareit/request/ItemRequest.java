@@ -10,8 +10,8 @@ import java.time.LocalDateTime;
  * TODO Sprint add-item-requests.
  */
 // класс, отвечающий за запрос вещи
-    @Data
-    @Builder
+@Data
+@Builder
 public class ItemRequest {
     private long id;
     private String description; //текст запроса, содержащий описание требуемой вещи
