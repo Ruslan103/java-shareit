@@ -12,8 +12,8 @@ import java.util.Objects;
 @Repository
 @Qualifier("userDbStorage")
 public class UserDbStorage implements UserStorage {
-    HashMap<Long, User> users = new HashMap<>();
-    long id;
+    private final HashMap<Long, User> users = new HashMap<>();
+    private long id;
 
     @Override
     public User addUser(User user) {

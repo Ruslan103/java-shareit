@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import ru.practicum.shareit.exception.LineNotNullException;
 import ru.practicum.shareit.exception.NotFoundByIdException;
-import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.UserDbStorage;
 
@@ -17,61 +17,61 @@ import java.util.List;
 public class ItemDbStorage implements ItemStorage {
 
     private final UserDbStorage userDbStorage;
-    private final HashMap<Long, List<ItemDto>> itemsDto = new HashMap<>(); // id владельца и список вещей
+    private final HashMap<Long, List<Item>> items = new HashMap<>(); // id владельца и список вещей
 
-    long itemId;
+    private long itemId;
 
     @Autowired
     public ItemDbStorage(UserDbStorage userDbStorage) {
         this.userDbStorage = userDbStorage;
     }
 
-    public ItemDto addItemDto(long userId, ItemDto itemDto) {
+    public Item addItem(long userId, Item item) {
         User user = userDbStorage.getUserById(userId);
         if (!userDbStorage.getUsers().contains(user)) {
             throw new NotFoundByIdException("User by id not found"); // 404
         }
-        if (itemDto.getName().isEmpty()) {
+        if (item.getName().isEmpty()) {
             throw new LineNotNullException("The name cannot be empty");
         }
-        if (itemDto.getDescription() == null) {
+        if (item.getDescription() == null) {
             throw new LineNotNullException("The description cannot be empty");
         }
-        if (itemDto.getAvailable() == null) {
+        if (item.getAvailable() == null) {
             throw new LineNotNullException("The available cannot be empty");
         }
-        List<ItemDto> listItems = getItems(userId);
-        listItems.add(itemDto);
+        List<Item> listItems = getItems(userId);
+        listItems.add(item);
         itemId++;
-        itemsDto.put(userId, listItems);
-        itemDto.setId(itemId);
-        return itemDto;
+        items.put(userId, listItems);
+        item.setId(itemId);
+        return item;
     }
 
-    public ItemDto updateItem(long userId, long itemId, ItemDto itemDto) {
-        List<ItemDto> listItems = itemsDto.get(userId);
-        ItemDto oldItem = getItemById(itemId);
+    public Item updateItem(long userId, long itemId, Item item) {
+        List<Item> listItems = items.get(userId);
+        Item oldItem = getItemById(itemId);
         if (listItems != null && listItems.contains(oldItem)) {
-            listItems.removeIf(item -> item.getId() == itemId);
-            ItemDto updateItem = ItemDto.builder()
-                    .name(itemDto.getName() != null ? itemDto.getName() : oldItem.getName())
-                    .owner(itemDto.getOwner() != null ? itemDto.getOwner() : oldItem.getOwner())
-                    .available(itemDto.getAvailable() != null ? itemDto.getAvailable() : true)
+            listItems.removeIf(newItem -> newItem.getId() == itemId);
+            Item updateItem = Item.builder()
+                    .name(item.getName() != null ? item.getName() : oldItem.getName())
+                    .owner(item.getOwner() != null ? item.getOwner() : oldItem.getOwner())
+                    .available(item.getAvailable() != null ? item.getAvailable() : true)
                     .id(oldItem.getId())
-                    .description(itemDto.getDescription() != null ? itemDto.getDescription() : oldItem.getDescription())
+                    .description(item.getDescription() != null ? item.getDescription() : oldItem.getDescription())
                     .build();
             listItems.add(updateItem);
-            itemsDto.put(userId, listItems);
+            items.put(userId, listItems);
             return updateItem;
         } else {
             throw new NotFoundByIdException("Item not found");//404
         }
     }
 
-    public ItemDto getItemById(long itemId) {
-        Collection<List<ItemDto>> listItems = itemsDto.values();
-        for (List<ItemDto> items : listItems) {
-            for (ItemDto item : items) {
+    public Item getItemById(long itemId) {
+        Collection<List<Item>> listItems = items.values();
+        for (List<Item> items : listItems) {
+            for (Item item : items) {
                 if (item.getId() == itemId) {
                     return item;
                 }
@@ -80,16 +80,16 @@ public class ItemDbStorage implements ItemStorage {
         return null;
     }
 
-    public List<ItemDto> getItems(long userId) {
-        return itemsDto.getOrDefault(userId, new ArrayList<>());
+    public List<Item> getItems(long userId) {
+        return items.getOrDefault(userId, new ArrayList<>());
     }
 
-    public List<ItemDto> getItemsByDescription(String text) {
-        Collection<List<ItemDto>> listItems = itemsDto.values();
+    public List<Item> getItemsByDescription(String text) {
+        Collection<List<Item>> listItems = items.values();
         if (!text.isEmpty()) {
-            List<ItemDto> result = new ArrayList<>();
-            for (List<ItemDto> items : listItems) {
-                for (ItemDto item : items) {
+            List<Item> result = new ArrayList<>();
+            for (List<Item> items : listItems) {
+                for (Item item : items) {
                     String description = item.getDescription().toLowerCase();
                     if (description.contains(text.toLowerCase()) && item.getAvailable()) {
                         result.add(item);

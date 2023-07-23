@@ -4,8 +4,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.item.ItemStorage;
 import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.dto.ItemMapper;
+import ru.practicum.shareit.item.model.Item;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -13,22 +16,30 @@ public class ItemServiceImpl implements ItemService {
     private final ItemStorage itemStorage;
 
     public ItemDto addItemDto(long id, ItemDto itemDto) {
-        return itemStorage.addItemDto(id, itemDto);
+        Item item = ItemMapper.toItem(itemDto);
+        return ItemMapper.itemDto(itemStorage.addItem(id, item));
     }
 
     public ItemDto updateItem(long userId, long itemId, ItemDto itemDto) {
-        return itemStorage.updateItem(userId, itemId, itemDto);
+        Item item = ItemMapper.toItem(itemDto);
+        return ItemMapper.itemDto(itemStorage.updateItem(userId, itemId, item));
     }
 
     public ItemDto getItemById(long id) {
-        return itemStorage.getItemById(id);
+        return ItemMapper.itemDto(itemStorage.getItemById(id));
     }
 
     public List<ItemDto> getItems(long userId) {
-        return itemStorage.getItems(userId);
+        List<Item> items = itemStorage.getItems(userId);
+        return items.stream()
+                .map(ItemMapper::itemDto)
+                .collect(Collectors.toList());
     }
 
     public List<ItemDto> getItemsByDescription(String text) {
-        return itemStorage.getItemsByDescription(text);
+        List<Item> items = itemStorage.getItemsByDescription(text);
+        return items.stream()
+                .map(ItemMapper::itemDto)
+                .collect(Collectors.toList());
     }
 }

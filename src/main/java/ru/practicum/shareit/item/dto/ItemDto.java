@@ -2,6 +2,8 @@ package ru.practicum.shareit.item.dto;
 
 import lombok.Builder;
 import lombok.Data;
+import ru.practicum.shareit.request.ItemRequest;
+import ru.practicum.shareit.user.User;
 
 /**
  * TODO Sprint add-controllers.
@@ -13,6 +15,6 @@ public class ItemDto {
     private String name;
     private String description;
     private Boolean available;
-    private String owner; // владелец вещи
-    private Long request; // если вещь была создана по запросу другого пользователя, то в этом поле будет храниться ссылка на соответствующий запрос
+    private User owner; // владелец вещи
+    private ItemRequest request; // если вещь была создана по запросу другого пользователя, то в этом поле будет храниться ссылка на соответствующий запрос
 }
