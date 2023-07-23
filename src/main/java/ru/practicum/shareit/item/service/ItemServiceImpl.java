@@ -8,7 +8,6 @@ import ru.practicum.shareit.item.dto.ItemMapper;
 import ru.practicum.shareit.item.model.Item;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -31,15 +30,11 @@ public class ItemServiceImpl implements ItemService {
 
     public List<ItemDto> getItems(long userId) {
         List<Item> items = itemStorage.getItems(userId);
-        return items.stream()
-                .map(ItemMapper::itemDto)
-                .collect(Collectors.toList());
+        return ItemMapper.getItemDtoList(items);
     }
 
     public List<ItemDto> getItemsByDescription(String text) {
         List<Item> items = itemStorage.getItemsByDescription(text);
-        return items.stream()
-                .map(ItemMapper::itemDto)
-                .collect(Collectors.toList());
+        return ItemMapper.getItemDtoList(items);
     }
 }
