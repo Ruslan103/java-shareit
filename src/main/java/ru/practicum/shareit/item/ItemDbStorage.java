@@ -17,7 +17,8 @@ import java.util.List;
 public class ItemDbStorage implements ItemStorage {
 
     private final UserDbStorage userDbStorage;
-    private final HashMap<Long, List<Item>> items = new HashMap<>(); // id владельца и список вещей
+    private final HashMap<Long, List<Item>> userItems = new HashMap<>(); // id владельца и список вещей
+    private final HashMap<Long, Item> items = new HashMap<>(); // id предмета и предмет
 
     private long itemId;
 
@@ -41,15 +42,16 @@ public class ItemDbStorage implements ItemStorage {
             throw new LineNotNullException("The available cannot be empty");
         }
         List<Item> listItems = getItems(userId);
-        listItems.add(item);
         itemId++;
-        items.put(userId, listItems);
         item.setId(itemId);
+        listItems.add(item);
+        items.put(itemId, item);
+        userItems.put(userId, listItems);
         return item;
     }
 
     public Item updateItem(long userId, long itemId, Item item) {
-        List<Item> listItems = items.get(userId);
+        List<Item> listItems = userItems.get(userId);
         Item oldItem = getItemById(itemId);
         if (listItems != null && listItems.contains(oldItem)) {
             listItems.removeIf(newItem -> newItem.getId() == itemId);
@@ -61,7 +63,8 @@ public class ItemDbStorage implements ItemStorage {
                     .description(item.getDescription() != null ? item.getDescription() : oldItem.getDescription())
                     .build();
             listItems.add(updateItem);
-            items.put(userId, listItems);
+            items.put(itemId, updateItem);
+            userItems.put(userId, listItems);
             return updateItem;
         } else {
             throw new NotFoundByIdException("Item not found");//404
@@ -69,31 +72,21 @@ public class ItemDbStorage implements ItemStorage {
     }
 
     public Item getItemById(long itemId) {
-        Collection<List<Item>> listItems = items.values();
-        for (List<Item> items : listItems) {
-            for (Item item : items) {
-                if (item.getId() == itemId) {
-                    return item;
-                }
-            }
-        }
-        return null;
+        return items.get(itemId);
     }
 
     public List<Item> getItems(long userId) {
-        return items.getOrDefault(userId, new ArrayList<>());
+        return userItems.getOrDefault(userId, new ArrayList<>());
     }
 
     public List<Item> getItemsByDescription(String text) {
-        Collection<List<Item>> listItems = items.values();
+        Collection<Item> listItems = items.values();
         if (!text.isEmpty()) {
             List<Item> result = new ArrayList<>();
-            for (List<Item> items : listItems) {
-                for (Item item : items) {
-                    String description = item.getDescription().toLowerCase();
-                    if (description.contains(text.toLowerCase()) && item.getAvailable()) {
-                        result.add(item);
-                    }
+            for (Item item : listItems) {
+                String description = item.getDescription().toLowerCase();
+                if (description.contains(text.toLowerCase()) && item.getAvailable()) {
+                    result.add(item);
                 }
             }
             return result;

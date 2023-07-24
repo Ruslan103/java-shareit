@@ -5,9 +5,6 @@ import lombok.Data;
 
 import java.util.Objects;
 
-/**
- * TODO Sprint add-controllers.
- */
 @Data
 @Builder
 public class User {
