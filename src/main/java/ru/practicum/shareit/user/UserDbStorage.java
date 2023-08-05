@@ -2,7 +2,8 @@ package ru.practicum.shareit.user;
 
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
-import ru.practicum.shareit.exception.InvalidEmailException;
+//import ru.practicum.shareit.exception.InvalidEmailException;
+
 
 import javax.validation.ValidationException;
 import java.util.Collection;
@@ -20,9 +21,9 @@ public class UserDbStorage implements UserStorage {
         if (users.containsValue(user)) {
             throw new ValidationException("Пользователь с таким Email уже существует"); //500
         }
-        if (user.getEmail() == null || !user.getEmail().contains("@")) {
-            throw new InvalidEmailException("Неверный Email"); // 400
-        }
+//        if (user.getEmail() == null || !user.getEmail().contains("@")) {
+//            throw new InvalidEmailException("Неверный Email"); // 400
+//        }
         id++;
         user.setId(id);
         users.put(id, user);
