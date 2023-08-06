@@ -12,6 +12,6 @@ public class ItemDto {
     private String name;
     private String description;
     private Boolean available;
-    private User owner; // владелец вещи
-    private ItemRequest request; // если вещь была создана по запросу другого пользователя, то в этом поле будет храниться ссылка на соответствующий запрос
+    private Long owner; // владелец вещи
+    private Long request; // если вещь была создана по запросу другого пользователя, то в этом поле будет храниться ссылка на соответствующий запрос
 }

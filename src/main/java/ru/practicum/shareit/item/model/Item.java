@@ -5,13 +5,36 @@ import lombok.Data;
 import ru.practicum.shareit.request.ItemRequest;
 import ru.practicum.shareit.user.User;
 
+import javax.persistence.*;
+
 @Data
 @Builder
+@Entity
+@Table(name = "items")
 public class Item {
+    @Id
+    @GeneratedValue(strategy = GenerationType.TABLE)
     private long id;
+    @Column(name = "name", nullable = false)
     private String name;
+    @Column(name = "description", nullable = false)
     private String description;
+    @Column(name = "available")
     private Boolean available; // статус о том, доступна или нет вещь для аренды
-    private User owner; // владелец вещи
-    private ItemRequest request; // если вещь была создана по запросу другого пользователя, то в этом поле будет храниться ссылка на соответствующий запрос.
+    @Column(name = "owner_id")
+    private Long owner; // id владелеца вещи
+    @Column(name = "request_id")
+    private Long request; //  id если вещь была создана по запросу другого пользователя, то в этом поле будет храниться ссылка на соответствующий запрос.
+
+    public Item(long id, String name, String description, Boolean available, Long owner, Long request) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.available = available;
+        this.owner = owner;
+        this.request = request;
+    }
+
+    public Item() {
+    }
 }
