@@ -62,4 +62,7 @@ public class ItemServiceImpl implements ItemService {
     public List<ItemDto> getItemsByDescription(String text) {
         return ItemMapper.getItemDtoList(itemRepository.findByDescriptionContaining(text));
     }
+    public void deleteItemById(long itemId){
+       itemRepository.deleteById(itemId);
+    }
 }
