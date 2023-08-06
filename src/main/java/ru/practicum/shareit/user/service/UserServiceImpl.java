@@ -37,17 +37,24 @@ public class UserServiceImpl implements UserService {
     public UserDto updateUser(long userId, UserDto userDto) {
         User oldUser = repository.getReferenceById(userId);
         User user = UserMapper.toUser(userDto);
-        if (repository.existsByEmail(user.getEmail())&&oldUser.getId()!=userId) {
+        if (user.getEmail() == null) {
+            user.setEmail(oldUser.getEmail());
+        }
+        if (user.getName() == null) {
+            user.setName(oldUser.getName());
+        }
+        User anotherUser =repository.getUserByEmail(user.getEmail());
+        if (repository.existsByEmail(user.getEmail())&&anotherUser.getId()!=userId) {
             throw new ValidationException("Пользователь с таким Email уже существует"); //500
         }
-        repository.deleteById(userId);
+        user.setId(userId);
         repository.save(user);
         return UserMapper.userDto(user);
     }
 
     @Override
     public void deleteUser(long userId) {
-        userStorage.deleteUser(userId);
+        repository.deleteById(userId);
     }
 
     @Override
@@ -57,6 +64,6 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Collection<UserDto> getUsers() {
-        return UserMapper.getItemDtoList(userStorage.getUsers());
+        return UserMapper.getItemDtoList(repository.findAll());
     }
 }
