@@ -6,9 +6,6 @@ import ru.practicum.shareit.user.User;
 
 import java.time.LocalDateTime;
 
-/**
- * TODO Sprint add-item-requests.
- */
 // класс, отвечающий за запрос вещи
 @Data
 @Builder
