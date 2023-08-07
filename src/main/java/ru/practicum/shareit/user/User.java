@@ -4,6 +4,7 @@ import lombok.Builder;
 import lombok.Data;
 
 import javax.persistence.*;
+import javax.validation.constraints.Email;
 import java.util.Objects;
 
 @Data
@@ -16,7 +17,7 @@ public class User {
     private long id;
     @Column(name = "name", nullable = false)
     private String name;
-    @Column(name = "email",nullable = false)
+    @Column(name = "email",nullable = false,unique = true)
     private String email;
 
     public User(long id, String name, String email) {

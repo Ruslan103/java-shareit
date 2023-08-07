@@ -3,6 +3,7 @@ package ru.practicum.shareit.user.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.exception.InvalidEmailException;
+import ru.practicum.shareit.exception.NotFoundByIdException;
 import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.UserRepository;
 import ru.practicum.shareit.user.UserStorage;
@@ -23,14 +24,10 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto addUser(UserDto userDto) {
         User user = UserMapper.toUser(userDto);
-        if (repository.existsByEmail(user.getEmail())) {
-            throw new ValidationException("Пользователь с таким Email уже существует"); //500
-        }
         if (user.getEmail() == null || !user.getEmail().contains("@")) {
-            throw new InvalidEmailException("Неверный Email"); // 400
+            throw new InvalidEmailException("Invalid Email"); // 400
         }
-        repository.save(user);
-        return UserMapper.userDto(user);
+        return UserMapper.userDto(repository.save(user));
     }
 
     @Override
@@ -43,13 +40,12 @@ public class UserServiceImpl implements UserService {
         if (user.getName() == null) {
             user.setName(oldUser.getName());
         }
-        User anotherUser =repository.getUserByEmail(user.getEmail());
-        if (repository.existsByEmail(user.getEmail())&&anotherUser.getId()!=userId) {
-            throw new ValidationException("Пользователь с таким Email уже существует"); //500
+        User anotherUser = repository.getUserByEmail(user.getEmail());
+        if (repository.existsByEmail(user.getEmail()) && anotherUser.getId() != userId) {
+            throw new ValidationException("User with this Email already exists"); //500
         }
         user.setId(userId);
-        repository.save(user);
-        return UserMapper.userDto(user);
+        return UserMapper.userDto(repository.save(user));
     }
 
     @Override
@@ -59,7 +55,13 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto getUserById(long userId) {
-        return UserMapper.userDto(repository.getReferenceById(userId));
+        if (repository.existsById(userId)) {
+            return UserMapper.userDto(repository.getReferenceById(userId));
+        } else {
+            throw new NotFoundByIdException("User by id not found");
+        }
+
+
     }
 
     @Override

@@ -35,7 +35,7 @@ public class ItemServiceImpl implements ItemService {
             throw new LineNotNullException("The available cannot be empty");
         }
         item.setOwner(userId);
-        itemRepository.save(item);
+       // itemRepository.save(item);
         return ItemMapper.itemDto(itemRepository.save(item));
     }
 
