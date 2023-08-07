@@ -22,9 +22,7 @@ public class ItemServiceImpl implements ItemService {
 
     public ItemDto addItemDto(long userId, ItemDto itemDto) {
         Item item = ItemMapper.toItem(itemDto);
-        if (!userRepository.existsById(userId)) {
-            throw new NotFoundByIdException("User by id not found"); // 404
-        }
+
         if (item.getName().isEmpty()) {
             throw new LineNotNullException("The name cannot be empty");
         }
@@ -33,6 +31,9 @@ public class ItemServiceImpl implements ItemService {
         }
         if (item.getAvailable() == null) {
             throw new LineNotNullException("The available cannot be empty");
+        }
+        if (!userRepository.existsById(userId)) {
+            throw new NotFoundByIdException("User by id not found"); // 404
         }
         item.setOwner(userId);
        // itemRepository.save(item);
