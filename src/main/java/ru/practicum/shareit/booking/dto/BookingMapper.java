@@ -1,10 +1,12 @@
 package ru.practicum.shareit.booking.dto;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
 import ru.practicum.shareit.booking.Booking;
 import ru.practicum.shareit.item.ItemRepository;
 import ru.practicum.shareit.user.UserRepository;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 //@Component
@@ -30,11 +32,7 @@ public class BookingMapper {
                 .build();
     }
 
-    public static Booking toBooking(UserRepository userRepository,ItemRepository itemRepository, BookingDtoRequest bookingDto) {
-//        UserService userService = new UserServiceImpl();
-//        final ItemRepository itemRepository = null;
-//        final UserRepository userRepository = null;
-//        final ItemRepository itemRepository = null;
+    public static Booking toBooking(UserRepository userRepository, ItemRepository itemRepository, BookingDtoRequest bookingDto) {
         return Booking.builder()
                 .booker(userRepository.getReferenceById(bookingDto.getBookerId()))
                 .end(bookingDto.getEnd())
@@ -44,7 +42,8 @@ public class BookingMapper {
                 .item(itemRepository.getReferenceById(bookingDto.getItemId()))
                 .build();
     }
-    public static BookingDtoResponse toBookingDtoResponse (Booking booking) {
+
+    public static BookingDtoResponse toBookingDtoResponse(Booking booking) {
         return BookingDtoResponse.builder()
                 .booker(booking.getBooker())
                 .end(booking.getEnd())
@@ -54,28 +53,10 @@ public class BookingMapper {
                 .item(booking.getItem())
                 .build();
     }
-//    public static BookingDto2 bookingDto2 (Booking booking) {
-//        return BookingDto2.builder()
-//                .booker(booking.getBookerId())
-//                .end(booking.getEnd())
-//                .start(booking.getStart())
-//                .status(booking.getStatus())
-//                .id(booking.getId())
-//                .item(booking.getItem(booking.getItemId()))
-//                .build();
-//    }
-//public static Booking mapToEntity(BookingDto dto) {
-//    Booking booking = Booking.builder()
-//            .id(dto.getId())
-//            .start(dto.getStart())
-//            .end(dto.getEnd())
-//            .status(dto.getStatus())
-//            .build();
-//    User booker = UserRepository.findById(dto.getBookerId());
-//    booking.setBooker(booker);
-//    Item item = ItemRepository.findById(dto.getItemId());
-//    booking.setItem(item);
-//    return booking;
-//}
 
+    public static  List<BookingDtoResponse> bookingDtoResponseList(List <Booking> bookings){
+        return bookings.stream()
+                .map(BookingMapper::toBookingDtoResponse)
+                .collect(Collectors.toList());
+    }
 }
