@@ -13,14 +13,17 @@ CREATE TABLE IF NOT EXISTS items (
   name VARCHAR(255) NOT NULL,
   description VARCHAR NOT NULL,
   available BOOLEAN,
-  owner_id INTEGER,
-  request_id INTEGER
+  owner_id BIGINT,
+  request_id BIGINT
 );
 DROP TABLE IF EXISTS booking CASCADE;
 CREATE TABLE IF NOT EXISTS booking (
-    id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    id BIGINT PRIMARY KEY,
     start_booking TIMESTAMP,
     end_booking TIMESTAMP,
-    booker INTEGER,
-    status VARCHAR
+    booker BIGINT,
+    status VARCHAR,
+    item_id BIGINT,
+    FOREIGN KEY (booker) REFERENCES users (id),
+    FOREIGN KEY (item_id) REFERENCES items (id)
 );

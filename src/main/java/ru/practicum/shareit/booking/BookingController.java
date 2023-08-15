@@ -1,15 +1,19 @@
 package ru.practicum.shareit.booking;
 
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import ru.practicum.shareit.booking.dto.BookingDto;
+import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.*;
+import ru.practicum.shareit.booking.dto.BookingDtoRequest;
+import ru.practicum.shareit.booking.dto.BookingDtoResponse;
 import ru.practicum.shareit.booking.service.BookingService;
 
 @RestController
-@RequestMapping(path = "/bookings")
+@RequiredArgsConstructor
+@RequestMapping("/bookings")
 public class BookingController {
-    BookingService bookingService;
-    public BookingDto addBookingDto(BookingDto bookingDto){
-      return bookingService.addBookingDto(bookingDto);
+  private final BookingService bookingService;
+
+    @PostMapping
+    public BookingDtoResponse addBookingDto(@RequestHeader("X-Sharer-User-Id") long userId, @RequestBody BookingDtoRequest bookingDto) {
+        return bookingService.addBookingDto(userId, bookingDto); // метод принимает id пользователя который бронирует и бронь
     }
 }

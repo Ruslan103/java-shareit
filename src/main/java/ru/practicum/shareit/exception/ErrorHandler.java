@@ -25,4 +25,14 @@ public class ErrorHandler {
     public ErrorResponse handleLineNotNullException(final LineNotNullException e) {
         return new ErrorResponse(e.getMessage());
     }
+    @ExceptionHandler
+    @ResponseStatus (HttpStatus.BAD_REQUEST) // 400
+    public ErrorResponse handleItemUnavailableException (final  ItemUnavailableException e){
+        return new ErrorResponse(e.getMessage());
+    }
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST) // 400
+    public ErrorResponse handleBookingEnd (final  BookingTimeException e){
+        return new ErrorResponse(e.getMessage());
+    }
 }
