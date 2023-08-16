@@ -7,16 +7,15 @@ import ru.practicum.shareit.booking.Status;
 import ru.practicum.shareit.booking.dto.BookingDtoRequest;
 import ru.practicum.shareit.booking.dto.BookingDtoResponse;
 import ru.practicum.shareit.booking.dto.BookingMapper;
-import ru.practicum.shareit.exception.BookingTimeException;
-import ru.practicum.shareit.exception.ItemUnavailableException;
-import ru.practicum.shareit.exception.LineNotNullException;
-import ru.practicum.shareit.exception.NotFoundByIdException;
+import ru.practicum.shareit.exception.*;
 import ru.practicum.shareit.item.ItemRepository;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.UserRepository;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 @Service
@@ -58,19 +57,41 @@ public class BookingServiceImpl implements BookingService {
     public BookingDtoResponse updateBooking(long userId, long bookingId, Boolean approved) {
         Booking booking = bookingRepository.getReferenceById(bookingId);
         Item item = booking.getItem();
-        if (userId==item.getOwner()){
+        if (userId == item.getOwner()) {
             booking.setStatus(Status.APPROVED);
-            return BookingMapper.toBookingDtoResponse(booking);
+            return BookingMapper.toBookingDtoResponse(bookingRepository.save(booking));
+        } else {
+            throw new NotFoundByIdException("This user is not owner");
         }
-        else {throw new NotFoundByIdException("This user is not owner");}
     }
 
-    public BookingDtoResponse getBookingById(long bookingId){
+    public BookingDtoResponse getBookingById(long bookingId) {
         return BookingMapper.toBookingDtoResponse(bookingRepository.getReferenceById(bookingId));
     }
 
-    public List<BookingDtoResponse> findBookingByBookerId(long bookerId){
-        List <Booking> bookings = bookingRepository.findBookingByBooker(bookerId);
-        return BookingMapper.bookingDtoResponseList(bookings);
+    public List<BookingDtoResponse> findBookingsByBookerAndStatus(long bookerId, String state) {
+        User booker = userRepository.getReferenceById(bookerId);
+        List<Booking> bookings;
+        if (!userRepository.existsById(bookerId)) {
+            throw new NotFoundByIdException("User by id not found");
+        }
+        else if (state.equalsIgnoreCase("All")) {
+            bookings=bookingRepository.findBookingsByBooker(booker);
+        } else if (state.equalsIgnoreCase("FUTURE")) {
+            List<Status> statusList =List.of(Status.APPROVED,Status.WAITING);
+            bookings=bookingRepository.findBookingsByBookerAndStatusIsIn(booker,statusList);
+        }
+        else {throw new ValidationException("Unknown state: "+state);
+        }
+        return BookingMapper.bookingDtoResponseList(SortBookingByStart.sort(bookings));
     }
+
+    private static class SortBookingByStart {
+        private static List<Booking> sort(List<Booking> bookings) {
+            bookings.sort(Comparator.comparing(Booking::getStart).reversed());
+            return bookings;
+        }
+    }
+
+
 }

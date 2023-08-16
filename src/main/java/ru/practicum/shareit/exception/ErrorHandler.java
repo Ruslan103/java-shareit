@@ -32,7 +32,12 @@ public class ErrorHandler {
     }
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST) // 400
-    public ErrorResponse handleBookingEnd (final  BookingTimeException e){
+    public ErrorResponse handleBookingTimeException (final  BookingTimeException e){
+        return new ErrorResponse(e.getMessage());
+    }
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR) // 500
+    public ErrorResponse handleValidationException  (final  ValidationException e){
         return new ErrorResponse(e.getMessage());
     }
 }

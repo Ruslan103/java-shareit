@@ -31,7 +31,7 @@ public class BookingController {
         return bookingService.getBookingById(bookingId);
     }
     @GetMapping
-    public List<BookingDtoResponse> findBookingByBookerId(@RequestHeader long bookerId){
-        return bookingService.findBookingByBookerId(bookerId);
+    public List<BookingDtoResponse> findBookingsByBookerAndStatus(@RequestHeader ("X-Sharer-User-Id") long bookerId, @RequestParam(required = false, defaultValue = "ALL") String state){
+        return bookingService.findBookingsByBookerAndStatus (bookerId, state);
     }
 }
