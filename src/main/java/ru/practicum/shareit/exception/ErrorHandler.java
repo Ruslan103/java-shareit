@@ -16,7 +16,7 @@ public class ErrorHandler {
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND) //404
-    public ErrorResponse handleUserNotFoundException(final NotFoundByIdException e) {
+    public ErrorResponse handleNotFoundByIdException(final NotFoundByIdException e) {
         return new ErrorResponse(e.getMessage());
     }
 
@@ -25,19 +25,28 @@ public class ErrorHandler {
     public ErrorResponse handleLineNotNullException(final LineNotNullException e) {
         return new ErrorResponse(e.getMessage());
     }
-    @ExceptionHandler
-    @ResponseStatus (HttpStatus.BAD_REQUEST) // 400
-    public ErrorResponse handleItemUnavailableException (final  ItemUnavailableException e){
-        return new ErrorResponse(e.getMessage());
-    }
+
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST) // 400
-    public ErrorResponse handleBookingTimeException (final  BookingTimeException e){
+    public ErrorResponse handleItemUnavailableException(final ItemUnavailableException e) {
         return new ErrorResponse(e.getMessage());
     }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST) // 400
+    public ErrorResponse handleBookingTimeException(final BookingTimeException e) {
+        return new ErrorResponse(e.getMessage());
+    }
+
     @ExceptionHandler
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR) // 500
-    public ErrorResponse handleValidationException  (final  ValidationException e){
+    public ErrorResponse handleValidationException(final ValidationException e) {
+        return new ErrorResponse(e.getMessage());
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST) // 400
+    public ErrorResponse handleStatusApprovedException(final StatusApprovedException e) {
         return new ErrorResponse(e.getMessage());
     }
 }
