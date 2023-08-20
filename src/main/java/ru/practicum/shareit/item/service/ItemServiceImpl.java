@@ -3,6 +3,9 @@ package ru.practicum.shareit.item.service;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import ru.practicum.shareit.booking.Booking;
+import ru.practicum.shareit.booking.Status;
+import ru.practicum.shareit.booking.service.BookingRepository;
 import ru.practicum.shareit.exception.LineNotNullException;
 import ru.practicum.shareit.exception.NotFoundByIdException;
 import ru.practicum.shareit.item.ItemRepository;
@@ -12,6 +15,7 @@ import ru.practicum.shareit.item.dto.ItemMapper;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.UserRepository;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -22,6 +26,7 @@ public class ItemServiceImpl implements ItemService {
     private final ItemStorage itemStorage;
     private final ItemRepository itemRepository;
     private final UserRepository userRepository;
+    private final BookingRepository bookingRepository;
 
     public ItemDto addItemDto(long userId, ItemDto itemDto) {
         Item item = ItemMapper.toItem(itemDto);
@@ -60,16 +65,54 @@ public class ItemServiceImpl implements ItemService {
         }
     }
 
-    public ItemDto getItemById(long itemId) {
+    public ItemDto getItemById(long itemId, long userId) {
         if (itemRepository.existsById(itemId)) {
-            return ItemMapper.itemDto(itemRepository.getReferenceById(itemId));
+            Item item = itemRepository.getReferenceById(itemId);
+            List<Status> statuses=List.of(Status.APPROVED);
+            List<Booking> bookings = bookingRepository.findBookingByItem(itemId,statuses);
+            if (bookings.size() != 0 && item.getOwner() == userId) {
+                bookings.forEach(booking -> {
+                    if (booking.getEnd().isBefore(LocalDateTime.now())) {
+                        item.setLastBooking(booking);
+                    }
+                    if (booking.getStart().isAfter(LocalDateTime.now())) {
+                        item.setNextBooking(booking);
+                    }
+                });
+            }
+            return ItemMapper.itemDtoForResponse(item);
         } else {
             throw new NotFoundByIdException("Item not found");//404
         }
     }
 
     public List<ItemDto> getItems(long userId) {
-        return ItemMapper.getItemDtoList(itemRepository.getItemByOwner(userId));
+//        List<Booking> bookings1 = bookingRepository.findBookingsByOwner(userId);
+//        List<Item> items = itemRepository.getItemByOwner(userId);
+//        List<Item> newItems = new ArrayList<>();
+//        for (Item item : items) {
+//            for (Booking booking : bookings1) {
+//                if (booking.getItem() == item) {
+//                    List<Booking> bookings = bookingRepository.findBookingsByOwnerAndItem(userId, item);
+//                    item.setLastBooking(bookings.get(1));
+//                    item.setNextBooking(bookings.get(1));
+//                }
+//            }
+//            newItems.add(item);
+//        }
+        return ItemMapper.getItemDtoList(itemRepository.getItemByOwner(userId).stream()
+                .map(item -> Item.builder()
+                        .id(item.getId())
+                        .name(item.getName())
+                        .owner(item.getOwner())
+                        .request(item.getRequest())
+                        .description(item.getDescription())
+                        .available(item.getAvailable())
+                        //.lastBooking(LocalDateTime.now())
+                        //.nextBooking(LocalDateTime.now())
+                        .build())
+                .collect(Collectors.toList()));
+        //return ItemMapper.getItemDtoList(newItems);
     }
 
     public List<ItemDto> getItemsByDescription(String text) {

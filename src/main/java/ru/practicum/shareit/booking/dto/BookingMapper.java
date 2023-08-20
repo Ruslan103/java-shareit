@@ -54,9 +54,16 @@ public class BookingMapper {
                 .build();
     }
 
-    public static  List<BookingDtoResponse> bookingDtoResponseList(List <Booking> bookings){
+    public static List<BookingDtoResponse> bookingDtoResponseList(List<Booking> bookings) {
         return bookings.stream()
                 .map(BookingMapper::toBookingDtoResponse)
                 .collect(Collectors.toList());
+    }
+
+    public static LastAndNextBookingDto toLastAndNextBookingDto(Booking booking) {
+        return LastAndNextBookingDto.builder()
+                .id(booking.getId())
+                .bookerId(booking.getBooker().getId())
+                .build();
     }
 }

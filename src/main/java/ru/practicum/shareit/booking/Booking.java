@@ -37,5 +37,4 @@ public class Booking {
     @ManyToOne
     @JoinColumn(name = "item_id", referencedColumnName = "id")
     private Item item; // id вещи которую бронируют
-
 }

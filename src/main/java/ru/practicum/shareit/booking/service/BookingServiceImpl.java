@@ -82,7 +82,6 @@ public class BookingServiceImpl implements BookingService {
     }
 
     public List<BookingDtoResponse> findBookingsByBookerAndStatus(long bookerId, String state) {
-
         if (!userRepository.existsById(bookerId)) {
             throw new NotFoundByIdException("User by id not found");
         }
