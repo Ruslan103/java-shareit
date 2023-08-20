@@ -13,7 +13,7 @@ import java.util.List;
 import static ru.practicum.shareit.booking.Status.APPROVED;
 
 public interface BookingRepository extends JpaRepository<Booking, Long> {
-    List<Booking> findBookingsByBookerAndStatus(User booker, Status status);
+//    List<Booking> findBookingsByBookerAndStatus(User booker, Status status);
 
     List<Booking> findBookingsByBookerAndStatusIsIn(User booker, List<Status> statuses);
 
@@ -28,11 +28,11 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     @Query("SELECT b FROM Booking b WHERE b.item.owner = ?1 and  b.status IN ?2")
     List<Booking> findBookingsByOwnerAndStatus(long owner, List<Status> statuses);
 
-    @Query("SELECT b FROM Booking b WHERE b.item.owner = ?1 and b.item = ?2 ORDER BY b.id DESC")
-    List<Booking> findBookingsByOwnerAndItem(long owner, Item item);
-
-    @Query("SELECT b FROM Booking b WHERE b.item.id= ?1 and b.end <= ?2 ORDER BY b.end DESC")
-    List<Booking> findLostBooking (long itemId, LocalDateTime localDateTime);
+//    @Query("SELECT b FROM Booking b WHERE b.item.owner = ?1 and b.item = ?2 ORDER BY b.id DESC")
+//    List<Booking> findBookingsByOwnerAndItem(long owner, Item item);
+//
+//    @Query("SELECT b FROM Booking b WHERE b.item.id= ?1 and b.end <= ?2 ORDER BY b.end DESC")
+//    List<Booking> findLostBooking (long itemId, LocalDateTime localDateTime);
     @Query("SELECT b FROM Booking b WHERE b.item.id= ?1 AND b.status IN ?2  ORDER BY b.start DESC")
     List<Booking> findBookingByItem (long itemId,List<Status> statuses);
 }

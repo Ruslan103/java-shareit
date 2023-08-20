@@ -63,10 +63,8 @@ public class BookingServiceImpl implements BookingService {
         }
         if (userId == item.getOwner() && approved) {
             booking.setStatus(Status.APPROVED);
-            // return BookingMapper.toBookingDtoResponse(bookingRepository.save(booking));
         } else if (userId == item.getOwner() && !approved) {
             booking.setStatus(Status.REJECTED);
-            // return BookingMapper.toBookingDtoResponse(bookingRepository.save(booking));
         } else {
             throw new NotFoundByIdException("This user is not owner");
         }
@@ -92,6 +90,12 @@ public class BookingServiceImpl implements BookingService {
         } else if (state.equalsIgnoreCase("FUTURE")) {
             List<Status> statusList = List.of(Status.APPROVED, Status.WAITING);
             bookings = bookingRepository.findBookingsByBookerAndStatusIsIn(booker, statusList);
+        } else if (state.equalsIgnoreCase("WAITING")) {
+            List<Status> statusList=List.of(Status.WAITING);
+            bookings = bookingRepository.findBookingsByBookerAndStatusIsIn(booker,statusList);
+        } else if (state.equalsIgnoreCase("REJECTED")) {
+            List<Status> statusList=List.of(Status.REJECTED);
+            bookings = bookingRepository.findBookingsByBookerAndStatusIsIn(booker,statusList);
         } else {
             throw new ValidationException("Unknown state: " + state);
         }
@@ -102,14 +106,20 @@ public class BookingServiceImpl implements BookingService {
         if (!userRepository.existsById(ownerId)) {
             throw new NotFoundByIdException("User by id not found");
         }
-
         List<Booking> bookings;
         if (state.equalsIgnoreCase("All")) {
             bookings = bookingRepository.findBookingsByOwner(ownerId);
         } else if (state.equalsIgnoreCase("FUTURE")) {
             List<Status> statusList = List.of(Status.APPROVED, Status.WAITING);
             bookings = bookingRepository.findBookingsByOwnerAndStatus(ownerId, statusList);
-        } else {
+        } else if (state.equalsIgnoreCase("WAITING")) {
+            List<Status> statusList=List.of(Status.WAITING);
+            bookings = bookingRepository.findBookingsByOwnerAndStatus(ownerId,statusList);
+        } else if (state.equalsIgnoreCase("REJECTED")) {
+            List<Status> statusList=List.of(Status.REJECTED);
+            bookings = bookingRepository.findBookingsByOwnerAndStatus(ownerId,statusList);
+        }
+        else {
             throw new ValidationException("Unknown state: " + state);
         }
         return BookingMapper.bookingDtoResponseList(SortBookingByStart.sort(bookings));
