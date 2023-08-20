@@ -1,6 +1,5 @@
 package ru.practicum.shareit.item.service;
 
-import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.booking.Booking;
@@ -68,8 +67,8 @@ public class ItemServiceImpl implements ItemService {
     public ItemDto getItemById(long itemId, long userId) {
         if (itemRepository.existsById(itemId)) {
             Item item = itemRepository.getReferenceById(itemId);
-            List<Status> statuses=List.of(Status.APPROVED);
-            List<Booking> bookings = bookingRepository.findBookingByItem(itemId,statuses);
+            List<Status> statuses = List.of(Status.APPROVED);
+            List<Booking> bookings = bookingRepository.findBookingByItem(itemId, statuses);
             if (bookings.size() != 0 && item.getOwner() == userId) {
                 bookings.forEach(booking -> {
                     if (booking.getEnd().isBefore(LocalDateTime.now())) {
@@ -87,32 +86,9 @@ public class ItemServiceImpl implements ItemService {
     }
 
     public List<ItemDto> getItems(long userId) {
-//        List<Booking> bookings1 = bookingRepository.findBookingsByOwner(userId);
-//        List<Item> items = itemRepository.getItemByOwner(userId);
-//        List<Item> newItems = new ArrayList<>();
-//        for (Item item : items) {
-//            for (Booking booking : bookings1) {
-//                if (booking.getItem() == item) {
-//                    List<Booking> bookings = bookingRepository.findBookingsByOwnerAndItem(userId, item);
-//                    item.setLastBooking(bookings.get(1));
-//                    item.setNextBooking(bookings.get(1));
-//                }
-//            }
-//            newItems.add(item);
-//        }
-        return ItemMapper.getItemDtoList(itemRepository.getItemByOwner(userId).stream()
-                .map(item -> Item.builder()
-                        .id(item.getId())
-                        .name(item.getName())
-                        .owner(item.getOwner())
-                        .request(item.getRequest())
-                        .description(item.getDescription())
-                        .available(item.getAvailable())
-                        //.lastBooking(LocalDateTime.now())
-                        //.nextBooking(LocalDateTime.now())
-                        .build())
-                .collect(Collectors.toList()));
-        //return ItemMapper.getItemDtoList(newItems);
+        return itemRepository.getItemByOwner(userId).stream()
+                .map(item -> getItemById(item.getId(), userId))
+                .collect(Collectors.toList());
     }
 
     public List<ItemDto> getItemsByDescription(String text) {
