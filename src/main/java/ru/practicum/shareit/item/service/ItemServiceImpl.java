@@ -18,7 +18,6 @@ import ru.practicum.shareit.user.repository.UserRepository;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -72,16 +71,13 @@ public class ItemServiceImpl implements ItemService {
         if (itemRepository.existsById(itemId)) {
             Item item = itemRepository.getReferenceById(itemId);
             List<Status> statuses = List.of(Status.APPROVED);
-            List<Booking> bookings = bookingRepository.findBookingByItem(itemId, statuses);
-            if (bookings.size() != 0 && item.getOwner() == userId) {
-                bookings.forEach(booking -> {
-                    if (booking.getEnd().isBefore(LocalDateTime.now()) || Objects.equals(booking.getEnd(), LocalDateTime.now())) {
-                        item.setLastBooking(booking);
-                    }
-                    if (booking.getStart().isAfter(LocalDateTime.now())) {
-                        item.setNextBooking(booking);
-                    }
-                });
+            if (item.getOwner() == userId) {
+                Booking lastBooking = bookingRepository.findFirstByItemAndStatusIsInAndStartBeforeOrderByStartDesc(item, statuses, LocalDateTime.now());
+                Booking nextBooking = bookingRepository.findFirstByItemAndStatusIsInAndEndAfterOrderByStartAsc(item, statuses, LocalDateTime.now());
+                item.setLastBooking(lastBooking);
+                if (lastBooking != nextBooking) {
+                    item.setNextBooking(nextBooking);
+                }
             }
             item.setComments(commentRepository.findCommentsByItemId(itemId));
             return ItemMapper.itemDtoForResponse(item);

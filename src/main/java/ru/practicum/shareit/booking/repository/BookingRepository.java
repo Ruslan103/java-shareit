@@ -7,6 +7,7 @@ import ru.practicum.shareit.booking.model.Status;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.model.User;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface BookingRepository extends JpaRepository<Booking, Long> {
@@ -43,4 +44,8 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
             "FROM Booking b " +
             "WHERE b.item.id= ?1 AND b.status IN ?2 ")
     List<Booking> findBookingByItem(long itemId, List<Status> statuses);
+
+    Booking findFirstByItemAndStatusIsInAndStartBeforeOrderByStartDesc(Item item, List<Status> statuses, LocalDateTime start);
+
+    Booking findFirstByItemAndStatusIsInAndEndAfterOrderByStartAsc(Item item, List<Status> statuses, LocalDateTime end);
 }
