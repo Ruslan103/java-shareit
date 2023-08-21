@@ -1,24 +1,15 @@
 package ru.practicum.shareit.booking.dto;
 
 import lombok.RequiredArgsConstructor;
-import ru.practicum.shareit.booking.Booking;
-import ru.practicum.shareit.item.ItemRepository;
-import ru.practicum.shareit.user.UserRepository;
+import ru.practicum.shareit.booking.model.Booking;
+import ru.practicum.shareit.item.repository.ItemRepository;
+import ru.practicum.shareit.user.repository.UserRepository;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
-//@Component
 public class BookingMapper {
-    //    private final ItemRepository itemRepository;
-//    private final UserRepository userRepository;
-//
-//    public BookingMapper(ItemRepository itemRepository, UserRepository userRepository) {
-//        this.itemRepository = itemRepository;
-//        this.userRepository = userRepository;
-//    }
-
 
     public static BookingDtoRequest toBookingDtoRequest(Booking booking) {
 

@@ -1,17 +1,13 @@
 package ru.practicum.shareit.item.dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import ru.practicum.shareit.booking.Booking;
 import ru.practicum.shareit.booking.dto.LastAndNextBookingDto;
-import ru.practicum.shareit.request.ItemRequest;
-import ru.practicum.shareit.user.User;
+import ru.practicum.shareit.item.model.Comment;
 
-import javax.persistence.Transient;
-import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @Builder
@@ -26,6 +22,7 @@ public class ItemDto {
     private Long request; // если вещь была создана по запросу другого пользователя, то в этом поле будет храниться ссылка на соответствующий запрос
     private LastAndNextBookingDto lastBooking;
     private LastAndNextBookingDto nextBooking;
+    private List<Comment> comments;
 
     public ItemDto(long id, String name, String description, Boolean available, Long owner, Long request) {
         this.id = id;
@@ -35,9 +32,4 @@ public class ItemDto {
         this.owner = owner;
         this.request = request;
     }
-
-
-
-
-
 }

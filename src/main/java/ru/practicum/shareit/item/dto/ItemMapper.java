@@ -15,6 +15,9 @@ public class ItemMapper {
                 .available(item.getAvailable())
                 .owner(item.getOwner())
                 .request(item.getRequest())
+                .lastBooking(item.getLastBooking() != null ? BookingMapper.toLastAndNextBookingDto(item.getLastBooking()) : null)
+                .nextBooking(item.getNextBooking() != null ? BookingMapper.toLastAndNextBookingDto(item.getNextBooking()) : null)
+                .comments(item.getComments())
                 .build();
     }
 
@@ -46,6 +49,7 @@ public class ItemMapper {
                 .request(item.getRequest())
                 .lastBooking(item.getLastBooking() != null ? BookingMapper.toLastAndNextBookingDto(item.getLastBooking()) : null)
                 .nextBooking(item.getNextBooking() != null ? BookingMapper.toLastAndNextBookingDto(item.getNextBooking()) : null)
+                .comments(item.getComments())
                 .build();
     }
 }

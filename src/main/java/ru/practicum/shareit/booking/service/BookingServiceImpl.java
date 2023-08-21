@@ -2,20 +2,22 @@ package ru.practicum.shareit.booking.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import ru.practicum.shareit.booking.Booking;
-import ru.practicum.shareit.booking.Status;
 import ru.practicum.shareit.booking.dto.BookingDtoRequest;
 import ru.practicum.shareit.booking.dto.BookingDtoResponse;
 import ru.practicum.shareit.booking.dto.BookingMapper;
+import ru.practicum.shareit.booking.model.Booking;
+import ru.practicum.shareit.booking.model.Status;
+import ru.practicum.shareit.booking.repository.BookingRepository;
 import ru.practicum.shareit.exception.*;
-import ru.practicum.shareit.item.ItemRepository;
 import ru.practicum.shareit.item.model.Item;
-import ru.practicum.shareit.user.User;
-import ru.practicum.shareit.user.UserRepository;
+import ru.practicum.shareit.item.repository.ItemRepository;
+import ru.practicum.shareit.user.model.User;
+import ru.practicum.shareit.user.repository.UserRepository;
 
 import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -91,11 +93,22 @@ public class BookingServiceImpl implements BookingService {
             List<Status> statusList = List.of(Status.APPROVED, Status.WAITING);
             bookings = bookingRepository.findBookingsByBookerAndStatusIsIn(booker, statusList);
         } else if (state.equalsIgnoreCase("WAITING")) {
-            List<Status> statusList=List.of(Status.WAITING);
-            bookings = bookingRepository.findBookingsByBookerAndStatusIsIn(booker,statusList);
+            List<Status> statusList = List.of(Status.WAITING);
+            bookings = bookingRepository.findBookingsByBookerAndStatusIsIn(booker, statusList);
         } else if (state.equalsIgnoreCase("REJECTED")) {
-            List<Status> statusList=List.of(Status.REJECTED);
-            bookings = bookingRepository.findBookingsByBookerAndStatusIsIn(booker,statusList);
+            List<Status> statusList = List.of(Status.REJECTED);
+            bookings = bookingRepository.findBookingsByBookerAndStatusIsIn(booker, statusList);
+        } else if (state.equalsIgnoreCase("CURRENT")) {
+            List<Status> statusList = List.of(Status.REJECTED, Status.APPROVED);
+            bookings = bookingRepository.findBookingsByBookerAndStatusIsIn(booker, statusList).stream()
+                    .filter(booking -> booking.getStart().isBefore(LocalDateTime.now()) && booking.getEnd().isAfter(LocalDateTime.now()))
+                    .collect(Collectors.toList());
+
+        } else if (state.equalsIgnoreCase("PAST")) {
+            List<Status> statusList = List.of(Status.APPROVED);
+            bookings = bookingRepository.findBookingsByBookerAndStatusIsIn(booker, statusList).stream()
+                    .filter(booking -> booking.getEnd().isBefore(LocalDateTime.now()))
+                    .collect(Collectors.toList());
         } else {
             throw new ValidationException("Unknown state: " + state);
         }
@@ -113,13 +126,22 @@ public class BookingServiceImpl implements BookingService {
             List<Status> statusList = List.of(Status.APPROVED, Status.WAITING);
             bookings = bookingRepository.findBookingsByOwnerAndStatus(ownerId, statusList);
         } else if (state.equalsIgnoreCase("WAITING")) {
-            List<Status> statusList=List.of(Status.WAITING);
-            bookings = bookingRepository.findBookingsByOwnerAndStatus(ownerId,statusList);
+            List<Status> statusList = List.of(Status.WAITING);
+            bookings = bookingRepository.findBookingsByOwnerAndStatus(ownerId, statusList);
         } else if (state.equalsIgnoreCase("REJECTED")) {
-            List<Status> statusList=List.of(Status.REJECTED);
-            bookings = bookingRepository.findBookingsByOwnerAndStatus(ownerId,statusList);
-        }
-        else {
+            List<Status> statusList = List.of(Status.REJECTED);
+            bookings = bookingRepository.findBookingsByOwnerAndStatus(ownerId, statusList);
+        } else if (state.equalsIgnoreCase("CURRENT")) {
+            List<Status> statusList = List.of(Status.REJECTED, Status.APPROVED);
+            bookings = bookingRepository.findBookingsByOwnerAndStatus(ownerId, statusList).stream()
+                    .filter(booking -> booking.getStart().isBefore(LocalDateTime.now()) && booking.getEnd().isAfter(LocalDateTime.now()))
+                    .collect(Collectors.toList());
+        } else if (state.equalsIgnoreCase("PAST")) {
+            List<Status> statusList = List.of(Status.APPROVED);
+            bookings = bookingRepository.findBookingsByOwnerAndStatus(ownerId, statusList).stream()
+                    .filter(booking -> booking.getEnd().isBefore(LocalDateTime.now()))
+                    .collect(Collectors.toList());
+        } else {
             throw new ValidationException("Unknown state: " + state);
         }
         return BookingMapper.bookingDtoResponseList(SortBookingByStart.sort(bookings));

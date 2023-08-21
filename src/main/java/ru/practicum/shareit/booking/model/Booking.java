@@ -1,16 +1,11 @@
-package ru.practicum.shareit.booking;
+package ru.practicum.shareit.booking.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import ru.practicum.shareit.item.ItemRepository;
 import ru.practicum.shareit.item.model.Item;
-import ru.practicum.shareit.user.User;
-import ru.practicum.shareit.user.UserRepository;
+import ru.practicum.shareit.user.model.User;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -30,11 +25,11 @@ public class Booking {
     @Column(name = "end_booking")
     private LocalDateTime end;
     @ManyToOne
-    @JoinColumn(name = "booker",referencedColumnName = "id")
-    private User booker; // id пользователя который бронирует
+    @JoinColumn(name = "booker", referencedColumnName = "id")
+    private User booker; // пользователь который бронирует
     @Column(name = "status")
     private Status status;
     @ManyToOne
     @JoinColumn(name = "item_id", referencedColumnName = "id")
-    private Item item; // id вещи которую бронируют
+    private Item item; //  вещь которую бронируют
 }
