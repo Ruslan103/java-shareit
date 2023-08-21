@@ -20,14 +20,14 @@ public class BookingController {
         return bookingService.addBooking(userId, bookingDto); // метод принимает id пользователя который бронирует и бронь
     }
 
-    @PatchMapping("/{bookingId}")
+    @PatchMapping("{bookingId}")
     public BookingDtoResponse updateBooking(@RequestHeader("X-Sharer-User-Id") long userId,
                                             @PathVariable long bookingId,
                                             @RequestParam(value = "approved") Boolean approved) {
         return bookingService.updateBooking(userId, bookingId, approved);
     }
 
-    @GetMapping("/{bookingId}")
+    @GetMapping("{bookingId}")
     public BookingDtoResponse getBookingById(@PathVariable long bookingId,
                                              @RequestHeader("X-Sharer-User-Id") long bookerId) {
         return bookingService.getBookingById(bookingId, bookerId);
