@@ -22,12 +22,12 @@ public class ItemController {
         return itemService.addItemDto(id, itemDto);
     }
 
-    @PatchMapping("{itemId}")
+    @PatchMapping("/{itemId}")
     public ItemDto updateItem(@RequestHeader("X-Sharer-User-Id") long userId, @PathVariable long itemId, @RequestBody ItemDto itemDto) {
         return itemService.updateItem(userId, itemId, itemDto);
     }
 
-    @GetMapping("{itemId}")
+    @GetMapping("/{itemId}")
     public ItemDto getItemById(@RequestHeader("X-Sharer-User-Id") long userId,@PathVariable long itemId) {
         return itemService.getItemById(itemId, userId);
     }
@@ -42,7 +42,7 @@ public class ItemController {
         return itemService.getItemsByDescription(text);
     }
 
-    @PostMapping("{itemId}/comment")
+    @PostMapping("/{itemId}/comment")
     public CommentDto addComment(@RequestHeader("X-Sharer-User-Id") long userId, @PathVariable long itemId, @RequestBody Comment comment) {
         return commentService.addComment(userId, itemId, comment);
     }
