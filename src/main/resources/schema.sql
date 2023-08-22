@@ -36,7 +36,7 @@ item_id BIGINT,
 comment VARCHAR NOT NULL,
 item_name VARCHAR,
 author_name VARCHAR,
-created VARCHAR,
+created TIMESTAMP,
 FOREIGN KEY (item_id) REFERENCES items (id),
  CONSTRAINT pk_comment PRIMARY KEY (id)
 )
