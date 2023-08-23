@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import ru.practicum.shareit.booking.model.Booking;
+import ru.practicum.shareit.user.model.User;
 
 import javax.persistence.*;
 import java.util.List;
@@ -25,8 +26,9 @@ public class Item {
     private String description;
     @Column(name = "available")
     private Boolean available; // статус о том, доступна или нет вещь для аренды
-    @Column(name = "owner_id")
-    private Long owner; // id владельца вещи
+    @ManyToOne
+    @JoinColumn(name = "owner_id", referencedColumnName = "id")
+    private User owner; // id владельца вещи
     @Column(name = "request_id")
     private Long request; //  id если вещь была создана по запросу другого пользователя, то в этом поле будет храниться ссылка на соответствующий запрос.
     @Transient

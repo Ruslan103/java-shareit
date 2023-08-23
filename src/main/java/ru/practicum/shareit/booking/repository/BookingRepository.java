@@ -27,17 +27,17 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
 
     @Query("SELECT b " +
             "FROM Booking b " +
-            "WHERE b.id = ?1 and ( b.item.owner = ?2 or b.booker.id = ?2)")
+            "WHERE b.id = ?1 and ( b.item.owner.id = ?2 or b.booker.id = ?2)")
     Booking findBookingByIdAndUser(long bookingId, long userId);
 
     @Query("SELECT b " +
             "FROM Booking b " +
-            "WHERE b.item.owner = ?1")
+            "WHERE b.item.owner.id = ?1")
     List<Booking> findBookingsByOwner(long owner);
 
     @Query("SELECT b " +
             "FROM Booking b " +
-            "WHERE b.item.owner = ?1 and  b.status IN ?2")
+            "WHERE b.item.owner.id = ?1 and  b.status IN ?2")
     List<Booking> findBookingsByOwnerAndStatus(long owner, List<Status> statuses);
 
     @Query("SELECT b " +
@@ -45,9 +45,9 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
             "WHERE b.item.id= ?1 AND b.status IN ?2 ")
     List<Booking> findBookingByItem(long itemId, List<Status> statuses);
 
-    Booking findFirstByItemAndStatusIsInAndStartBeforeOrderByStartDesc(Item item, List<Status> statuses, LocalDateTime start);
+    Booking findFirstByItemIdAndStatusIsInAndStartBeforeOrderByStartDesc(long itemId, List<Status> statuses, LocalDateTime start);
 
-    Booking findFirstByItemAndStatusIsInAndEndAfterOrderByStartAsc(Item item, List<Status> statuses, LocalDateTime end);
+    Booking findFirstByItemIdAndStatusIsInAndEndAfterOrderByStartAsc(long itemId, List<Status> statuses, LocalDateTime end);
 
     Booking findFirstByItemAndStatusInAndStartBefore(Item item, List<Status> statuses, LocalDateTime start);
     // Booking findFirstByItemIdAndStatusAndStartAfterOrderByStartAsc(long itemId, Status status, LocalDateTime dateTime);

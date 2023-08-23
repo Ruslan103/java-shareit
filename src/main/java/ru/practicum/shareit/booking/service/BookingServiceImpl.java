@@ -31,7 +31,7 @@ public class BookingServiceImpl implements BookingService {
             throw new NotFoundByIdException("Item by id not found");
         }
         Item item = itemRepository.getReferenceById(bookingDto.getItemId());
-        if (userId == item.getOwner()) {
+        if (userId == item.getOwner().getId()) {
             throw new NotFoundByIdException("The owner of the item cannot book it");
         }
         if (!item.getAvailable()) {
@@ -63,9 +63,9 @@ public class BookingServiceImpl implements BookingService {
         if (approved && booking.getStatus() == Status.APPROVED) {
             throw new StatusApprovedException("Status already approved");
         }
-        if (userId == item.getOwner() && approved) {
+        if (userId == item.getOwner().getId() && approved) {
             booking.setStatus(Status.APPROVED);
-        } else if (userId == item.getOwner() && !approved) {
+        } else if (userId == item.getOwner().getId() && !approved) {
             booking.setStatus(Status.REJECTED);
         } else {
             throw new NotFoundByIdException("This user is not owner");
