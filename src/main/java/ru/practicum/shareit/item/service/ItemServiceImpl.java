@@ -90,15 +90,15 @@ public class ItemServiceImpl implements ItemService {
         if (itemRepository.existsById(itemId)) {
             Item item = itemRepository.getReferenceById(itemId);
             List<Status> statuses = List.of(Status.APPROVED);
-           List<Booking> bookings = bookingRepository.findBookingByItem(item);
-          //  List <Booking> bookings = bookingRepository.findAll();
+            List<Booking> bookings = bookingRepository.findBookingByItem(item);
+            //  List <Booking> bookings = bookingRepository.findAll();
             if (bookings.size() != 0 && item.getOwner().getId() == userId) {
                 bookings.forEach(booking -> {
                     if (booking.getEnd().isBefore(LocalDateTime.now())) {
                         item.setLastBooking(booking);
                     }
                     if (booking.getStart().isAfter(LocalDateTime.now())) {
-                        if (item.getLastBooking()!=booking) {
+                        if (item.getLastBooking() != booking) {
                             item.setNextBooking(booking);
                         }
                     }
