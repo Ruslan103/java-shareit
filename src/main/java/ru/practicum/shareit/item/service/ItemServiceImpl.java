@@ -101,7 +101,6 @@ public class ItemServiceImpl implements ItemService {
                         if (item.getLastBooking()!=booking) {
                             item.setNextBooking(booking);
                         }
-
                     }
                 });
             }
