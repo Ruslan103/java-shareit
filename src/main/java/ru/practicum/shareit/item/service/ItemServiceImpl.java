@@ -98,7 +98,10 @@ public class ItemServiceImpl implements ItemService {
                         item.setLastBooking(booking);
                     }
                     if (booking.getStart().isAfter(LocalDateTime.now())) {
-                        item.setNextBooking(booking);
+                        if (item.getLastBooking()!=booking) {
+                            item.setNextBooking(booking);
+                        }
+
                     }
                 });
             }
