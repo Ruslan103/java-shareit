@@ -27,6 +27,7 @@ public class Booking {
     @ManyToOne
     @JoinColumn(name = "booker", referencedColumnName = "id")
     private User booker; // пользователь который бронирует
+    @Enumerated(EnumType.STRING)
     @Column(name = "status")
     private Status status;
     @ManyToOne
