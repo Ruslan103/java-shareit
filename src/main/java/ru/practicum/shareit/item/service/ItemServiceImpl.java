@@ -74,23 +74,24 @@ public class ItemServiceImpl implements ItemService {
 //            List<Status> statuses = List.of(Status.APPROVED);
 //            List<Booking> bookings =bookingRepository.findBookingByItem(itemId,statuses);
 //            if (item.getOwner() == userRepository.getReferenceById(userId)) {
-//               // Booking lastBooking = bookingRepository.findFirstByItemIdAndStatusIsInAndStartBeforeOrderByStartDesc(itemId, statuses, LocalDateTime.now());
-//                //Booking nextBooking = bookingRepository.findFirstByItemIdAndStatusIsInAndEndAfterOrderByStartAsc(itemId, statuses, LocalDateTime.now());
-//                if ()23/08
+//                Booking lastBooking = bookingRepository.findFirstByItemAndStatusIsInAndStartBeforeOrderByStartDesc(item, statuses, LocalDateTime.now());
+//                Booking nextBooking = bookingRepository.findFirstByItemAndStatusIsInAndEndAfterOrderByStartAsc(item, statuses, LocalDateTime.now());
 //                item.setLastBooking(lastBooking);
 //                if (lastBooking != nextBooking) {
 //                    item.setNextBooking(nextBooking);
 //                }
 //            }
-//         //   item.setComments(commentRepository.findCommentsByItemId(itemId));
+//          item.setComments(commentRepository.findCommentsByItemId(itemId));
 //            return ItemMapper.itemDtoForResponse(item);
 //        } else {
 //            throw new NotFoundByIdException("Item not found");//404
 //        }
+
         if (itemRepository.existsById(itemId)) {
             Item item = itemRepository.getReferenceById(itemId);
             List<Status> statuses = List.of(Status.APPROVED);
-            List<Booking> bookings = bookingRepository.findBookingByItem(itemId, statuses);
+           List<Booking> bookings = bookingRepository.findBookingByItem(item);
+          //  List <Booking> bookings = bookingRepository.findAll();
             if (bookings.size() != 0 && item.getOwner().getId() == userId) {
                 bookings.forEach(booking -> {
                     if (booking.getEnd().isBefore(LocalDateTime.now())) {
