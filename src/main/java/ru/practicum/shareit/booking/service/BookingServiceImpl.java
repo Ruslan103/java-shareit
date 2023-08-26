@@ -2,10 +2,12 @@ package ru.practicum.shareit.booking.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.dto.BookingDtoRequest;
 import ru.practicum.shareit.booking.dto.BookingDtoResponse;
 import ru.practicum.shareit.booking.dto.BookingMapper;
 import ru.practicum.shareit.booking.model.Booking;
+import ru.practicum.shareit.booking.model.State;
 import ru.practicum.shareit.booking.model.Status;
 import ru.practicum.shareit.booking.repository.BookingRepository;
 import ru.practicum.shareit.exception.*;
@@ -26,6 +28,7 @@ public class BookingServiceImpl implements BookingService {
     private final ItemRepository itemRepository;
     private final UserRepository userRepository;
 
+    @Transactional
     public BookingDtoResponse addBooking(long userId, BookingDtoRequest bookingDto) {
         if (!itemRepository.existsById(bookingDto.getItemId())) {
             throw new NotFoundByIdException("Item by id not found");
@@ -57,6 +60,7 @@ public class BookingServiceImpl implements BookingService {
         return BookingMapper.toBookingDtoResponse(booking);
     }
 
+    @Transactional
     public BookingDtoResponse updateBooking(long userId, long bookingId, Boolean approved) {
         Booking booking = bookingRepository.getReferenceById(bookingId);
         Item item = booking.getItem();
@@ -73,6 +77,7 @@ public class BookingServiceImpl implements BookingService {
         return BookingMapper.toBookingDtoResponse(bookingRepository.save(booking));
     }
 
+    @Transactional(readOnly = true)
     public BookingDtoResponse getBookingById(long bookingId, long userId) {
         try {
             return BookingMapper.toBookingDtoResponse(bookingRepository.findBookingByIdAndUser(bookingId, userId));
@@ -81,69 +86,88 @@ public class BookingServiceImpl implements BookingService {
         }
     }
 
+    @Transactional(readOnly = true)
     public List<BookingDtoResponse> findBookingsByBookerAndStatus(long bookerId, String state) {
         if (!userRepository.existsById(bookerId)) {
             throw new NotFoundByIdException("User by id not found");
         }
         User booker = userRepository.getReferenceById(bookerId);
-        List<Booking> bookings;
-        if (state.equalsIgnoreCase("All")) {
-            bookings = bookingRepository.findBookingsByBooker(booker);
-        } else if (state.equalsIgnoreCase("FUTURE")) {
-            List<Status> statusList = List.of(Status.APPROVED, Status.WAITING);
-            bookings = bookingRepository.findBookingsByBookerAndStatusIsIn(booker, statusList);
-        } else if (state.equalsIgnoreCase("WAITING")) {
-            List<Status> statusList = List.of(Status.WAITING);
-            bookings = bookingRepository.findBookingsByBookerAndStatusIsIn(booker, statusList);
-        } else if (state.equalsIgnoreCase("REJECTED")) {
-            List<Status> statusList = List.of(Status.REJECTED);
-            bookings = bookingRepository.findBookingsByBookerAndStatusIsIn(booker, statusList);
-        } else if (state.equalsIgnoreCase("CURRENT")) {
-            List<Status> statusList = List.of(Status.REJECTED, Status.APPROVED);
-            bookings = bookingRepository.findBookingsByBookerAndStatusIsIn(booker, statusList).stream()
-                    .filter(booking -> booking.getStart().isBefore(LocalDateTime.now()) && booking.getEnd().isAfter(LocalDateTime.now()))
-                    .collect(Collectors.toList());
-
-        } else if (state.equalsIgnoreCase("PAST")) {
-            List<Status> statusList = List.of(Status.APPROVED);
-            bookings = bookingRepository.findBookingsByBookerAndStatusIsIn(booker, statusList).stream()
-                    .filter(booking -> booking.getEnd().isBefore(LocalDateTime.now()))
-                    .collect(Collectors.toList());
-        } else {
-            throw new ValidationException("Unknown state: " + state);
+        List<Booking> bookings = null;
+        State enumState = State.getEnum(state);
+        switch (enumState) {
+            case ALL:
+                bookings = bookingRepository.findBookingsByBooker(booker);
+                break;
+            case FUTURE:
+                List<Status> futureStatusList = List.of(Status.APPROVED, Status.WAITING);
+                bookings = bookingRepository.findBookingsByBookerAndStatusIsIn(booker, futureStatusList);
+                break;
+            case WAITING:
+                List<Status> waitingStatusList = List.of(Status.WAITING);
+                bookings = bookingRepository.findBookingsByBookerAndStatusIsIn(booker, waitingStatusList);
+                break;
+            case REJECTED:
+                List<Status> rejectedStatusList = List.of(Status.REJECTED);
+                bookings = bookingRepository.findBookingsByBookerAndStatusIsIn(booker, rejectedStatusList);
+                break;
+            case CURRENT:
+                List<Status> currentStatusList = List.of(Status.REJECTED, Status.APPROVED);
+                bookings = bookingRepository.findBookingsByBookerAndStatusIsIn(booker, currentStatusList)
+                        .stream()
+                        .filter(booking -> booking.getStart().isBefore(LocalDateTime.now()) && booking.getEnd().isAfter(LocalDateTime.now()))
+                        .collect(Collectors.toList());
+                break;
+            case PAST:
+                List<Status> pastStatusList = List.of(Status.APPROVED);
+                bookings = bookingRepository.findBookingsByBookerAndStatusIsIn(booker, pastStatusList)
+                        .stream()
+                        .filter(booking -> booking.getEnd().isBefore(LocalDateTime.now()))
+                        .collect(Collectors.toList());
+                break;
         }
+
         return BookingMapper.bookingDtoResponseList(SortBookingByStart.sort(bookings));
     }
 
+    @Transactional(readOnly = true)
     public List<BookingDtoResponse> findBookingsByOwnerAndStatus(long ownerId, String state) {
         if (!userRepository.existsById(ownerId)) {
             throw new NotFoundByIdException("User by id not found");
         }
-        List<Booking> bookings;
-        if (state.equalsIgnoreCase("All")) {
-            bookings = bookingRepository.findBookingsByOwner(ownerId);
-        } else if (state.equalsIgnoreCase("FUTURE")) {
-            List<Status> statusList = List.of(Status.APPROVED, Status.WAITING);
-            bookings = bookingRepository.findBookingsByOwnerAndStatus(ownerId, statusList);
-        } else if (state.equalsIgnoreCase("WAITING")) {
-            List<Status> statusList = List.of(Status.WAITING);
-            bookings = bookingRepository.findBookingsByOwnerAndStatus(ownerId, statusList);
-        } else if (state.equalsIgnoreCase("REJECTED")) {
-            List<Status> statusList = List.of(Status.REJECTED);
-            bookings = bookingRepository.findBookingsByOwnerAndStatus(ownerId, statusList);
-        } else if (state.equalsIgnoreCase("CURRENT")) {
-            List<Status> statusList = List.of(Status.REJECTED, Status.APPROVED);
-            bookings = bookingRepository.findBookingsByOwnerAndStatus(ownerId, statusList).stream()
-                    .filter(booking -> booking.getStart().isBefore(LocalDateTime.now()) && booking.getEnd().isAfter(LocalDateTime.now()))
-                    .collect(Collectors.toList());
-        } else if (state.equalsIgnoreCase("PAST")) {
-            List<Status> statusList = List.of(Status.APPROVED);
-            bookings = bookingRepository.findBookingsByOwnerAndStatus(ownerId, statusList).stream()
-                    .filter(booking -> booking.getEnd().isBefore(LocalDateTime.now()))
-                    .collect(Collectors.toList());
-        } else {
-            throw new ValidationException("Unknown state: " + state);
+        List<Booking> bookings = null;
+        State enumState = State.getEnum(state);
+        switch (enumState) {
+            case ALL:
+                bookings = bookingRepository.findBookingsByOwner(ownerId);
+                break;
+            case FUTURE:
+                List<Status> futureStatusList = List.of(Status.APPROVED, Status.WAITING);
+                bookings = bookingRepository.findBookingsByOwnerAndStatus(ownerId, futureStatusList);
+                break;
+            case WAITING:
+                List<Status> waitingStatusList = List.of(Status.WAITING);
+                bookings = bookingRepository.findBookingsByOwnerAndStatus(ownerId, waitingStatusList);
+                break;
+            case REJECTED:
+                List<Status> rejectedStatusList = List.of(Status.REJECTED);
+                bookings = bookingRepository.findBookingsByOwnerAndStatus(ownerId, rejectedStatusList);
+                break;
+            case CURRENT:
+                List<Status> currentStatusList = List.of(Status.REJECTED, Status.APPROVED);
+                bookings = bookingRepository.findBookingsByOwnerAndStatus(ownerId, currentStatusList)
+                        .stream()
+                        .filter(booking -> booking.getStart().isBefore(LocalDateTime.now()) && booking.getEnd().isAfter(LocalDateTime.now()))
+                        .collect(Collectors.toList());
+                break;
+            case PAST:
+                List<Status> pastStatusList = List.of(Status.APPROVED);
+                bookings = bookingRepository.findBookingsByOwnerAndStatus(ownerId, pastStatusList)
+                        .stream()
+                        .filter(booking -> booking.getEnd().isBefore(LocalDateTime.now()))
+                        .collect(Collectors.toList());
+                break;
         }
+
         return BookingMapper.bookingDtoResponseList(SortBookingByStart.sort(bookings));
     }
 

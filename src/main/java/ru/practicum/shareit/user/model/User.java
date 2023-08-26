@@ -1,16 +1,17 @@
 package ru.practicum.shareit.user.model;
 
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.Objects;
 
-@Data
 @Builder
 @Entity
 @Table(name = "users")
-
+@Getter
+@Setter
 public class User {
 
     @Id

@@ -2,6 +2,7 @@ package ru.practicum.shareit.item.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.model.Status;
 import ru.practicum.shareit.booking.repository.BookingRepository;
@@ -30,6 +31,7 @@ public class ItemServiceImpl implements ItemService {
     private final BookingRepository bookingRepository;
     private final CommentRepository commentRepository;
 
+    @Transactional
     public ItemDto addItemDto(long userId, ItemDto itemDto) {
         Item item = ItemMapper.toItem(userRepository, userId, itemDto);
 
@@ -45,10 +47,10 @@ public class ItemServiceImpl implements ItemService {
         if (!userRepository.existsById(userId)) {
             throw new NotFoundByIdException("User by id not found"); // 404
         }
-        // item.setOwner(userId);
         return ItemMapper.itemDto(itemRepository.save(item));
     }
 
+    @Transactional
     public ItemDto updateItem(long userId, long itemId, ItemDto itemDto) {
         Item item = ItemMapper.toItem(userRepository, userId, itemDto);
         if (itemRepository.existsById(itemId) && userRepository.existsById(userId)) {
@@ -68,6 +70,7 @@ public class ItemServiceImpl implements ItemService {
         }
     }
 
+    @Transactional(readOnly = true)
     public ItemDto getItemById(long itemId, long userId) {
         if (itemRepository.existsById(itemId)) {
             Item item = itemRepository.getReferenceById(itemId);
@@ -87,6 +90,7 @@ public class ItemServiceImpl implements ItemService {
         }
     }
 
+    @Transactional(readOnly = true)
     public List<ItemDto> getItems(long userId) {
         User user = userRepository.getReferenceById(userId);
         List<ItemDto> itemDtoList = ItemMapper.getItemDtoList(itemRepository.getItemByOwner(user));
@@ -95,6 +99,7 @@ public class ItemServiceImpl implements ItemService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional(readOnly = true)
     public List<ItemDto> getItemsByDescription(String text) {
         List<Item> items = !text.isEmpty()
                 ? itemRepository.findByDescriptionContainingIgnoreCase(text).stream()
@@ -104,6 +109,7 @@ public class ItemServiceImpl implements ItemService {
         return ItemMapper.getItemDtoList(items);
     }
 
+    @Transactional
     public void deleteItemById(long itemId) {
         itemRepository.deleteById(itemId);
     }
