@@ -52,7 +52,6 @@ public class ItemMapper {
                 .collect(Collectors.toList());
     }
 
-
     public static ItemDto itemDtoForResponse(Item item) {
         if (item.getRequest() == null) {
             return ItemDto.builder()

@@ -1,6 +1,5 @@
 package ru.practicum.shareit.booking.repository;
 
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -23,7 +22,7 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
             "AND b.status IN ?3")
     boolean isBookerAndItemExist(User booker, Item item, List<Status> statuses);
 
-    List <Booking> findBookingsByBooker(User booker, Pageable pageable);
+    List<Booking> findBookingsByBooker(User booker, Pageable pageable);
 
     Booking findTopByBookerAndItemOrderByStart(User booker, Item item);
 
@@ -35,12 +34,12 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     @Query("SELECT b " +
             "FROM Booking b " +
             "WHERE b.item.owner.id = ?1")
-    List <Booking> findBookingsByOwner(long owner, Pageable pageable);
+    List<Booking> findBookingsByOwner(long owner, Pageable pageable);
 
     @Query("SELECT b " +
             "FROM Booking b " +
             "WHERE b.item.owner.id = ?1 and  b.status IN ?2")
-    List <Booking> findBookingsByOwnerAndStatus(long owner, List<Status> statuses,Pageable pageable);
+    List<Booking> findBookingsByOwnerAndStatus(long owner, List<Status> statuses, Pageable pageable);
 
     @Query("SELECT b " +
             "FROM Booking b " +

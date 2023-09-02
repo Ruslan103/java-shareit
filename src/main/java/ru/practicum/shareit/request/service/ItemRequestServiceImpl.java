@@ -46,14 +46,6 @@ public class ItemRequestServiceImpl implements ItemRequestService {
             throw new NotFoundByIdException("User by id not found"); // 404
         }
         List<ItemRequest> list = itemRequestRepository.findRequestByRequesterId(userId);
-
-
-//        return ItemRequestMapper.getItemRequestDtoList(itemRequestRepository.findRequestByRequesterId(userId).stream()
-//                .map(itemRequest -> {
-//                    itemRequest.setItems(itemRepository.findByRequestId(itemRequest.getId()));
-//                    return itemRequest;
-//                })
-//                .collect(Collectors.toList()));
         return ItemRequestMapper.getItemRequestDtoList(itemRepository, list);
     }
 
@@ -74,12 +66,10 @@ public class ItemRequestServiceImpl implements ItemRequestService {
         if (!userRepository.existsById(userId)) {
             throw new ValidationException("User by id not found"); // 404
         }
-        if (!itemRequestRepository.existsById(requestId)){
+        if (!itemRequestRepository.existsById(requestId)) {
             throw new NotFoundByIdException("Request by id not found"); // 404
         }
         ItemRequest itemRequest = itemRequestRepository.getReferenceById(requestId);
         return ItemRequestMapper.toItemRequestDto(itemRepository, itemRequest);
     }
-
-
 }

@@ -49,9 +49,10 @@ public class ErrorHandler {
     public ErrorResponse handleStatusApprovedException(final StatusApprovedException e) {
         return new ErrorResponse(e.getMessage());
     }
+
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST) // 400
-    public ErrorResponse handleRequestParameterException (final RequestParameterException e) {
+    public ErrorResponse handleRequestParameterException(final RequestParameterException e) {
         return new ErrorResponse(e.getMessage());
     }
 }

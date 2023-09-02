@@ -1,8 +1,6 @@
 package ru.practicum.shareit.request.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
 import ru.practicum.shareit.request.service.ItemRequestService;
@@ -17,7 +15,8 @@ public class ItemRequestController {
     private final ItemRequestService itemRequestService;
 
     @PostMapping
-    public ItemRequestDto addItemRequest(@RequestHeader("X-Sharer-User-Id") long userId, @RequestBody ItemRequestDto itemRequestDto) {
+    public ItemRequestDto addItemRequest(@RequestHeader("X-Sharer-User-Id") long userId,
+                                         @RequestBody ItemRequestDto itemRequestDto) {
         return itemRequestService.addItemRequest(userId, itemRequestDto);
     }
 
@@ -34,9 +33,9 @@ public class ItemRequestController {
 
     }
 
-
     @GetMapping("{requestId}")
-    public ItemRequestDto getIemRequestById(@PathVariable long requestId, @RequestHeader("X-Sharer-User-Id") long userId) {
+    public ItemRequestDto getIemRequestById(@PathVariable long requestId,
+                                            @RequestHeader("X-Sharer-User-Id") long userId) {
         return itemRequestService.getIemRequestById(requestId, userId);
     }
 }

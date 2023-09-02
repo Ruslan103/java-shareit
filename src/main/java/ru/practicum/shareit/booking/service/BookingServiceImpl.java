@@ -131,7 +131,6 @@ public class BookingServiceImpl implements BookingService {
                         .collect(Collectors.toList());
                 break;
         }
-
         return BookingMapper.bookingDtoResponseList(bookings);
     }
 
@@ -177,7 +176,6 @@ public class BookingServiceImpl implements BookingService {
                         .collect(Collectors.toList());
                 break;
         }
-
         return BookingMapper.bookingDtoResponseList(bookings);
     }
 }
