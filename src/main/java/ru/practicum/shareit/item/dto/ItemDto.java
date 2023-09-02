@@ -19,7 +19,7 @@ public class ItemDto {
     private String description;
     private Boolean available;
     private Long ownerId; // владелец вещи
-    private Long request; // если вещь была создана по запросу другого пользователя, то в этом поле будет храниться ссылка на соответствующий запрос
+    private Long requestId; // если вещь была создана по запросу другого пользователя, то в этом поле будет храниться ссылка на соответствующий запрос
     private LastAndNextBookingDto lastBooking;
     private LastAndNextBookingDto nextBooking;
     private List<Comment> comments;
@@ -30,6 +30,6 @@ public class ItemDto {
         this.description = description;
         this.available = available;
         this.ownerId = owner;
-        this.request = request;
+        this.requestId = request;
     }
 }

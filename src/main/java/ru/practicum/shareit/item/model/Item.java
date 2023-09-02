@@ -1,7 +1,10 @@
 package ru.practicum.shareit.item.model;
 
 import lombok.*;
+import org.apache.catalina.connector.Request;
+import org.springframework.boot.autoconfigure.cassandra.CassandraProperties;
 import ru.practicum.shareit.booking.model.Booking;
+import ru.practicum.shareit.request.model.ItemRequest;
 import ru.practicum.shareit.user.model.User;
 
 import javax.persistence.*;
@@ -27,8 +30,9 @@ public class Item {
     @ManyToOne
     @JoinColumn(name = "owner_id", referencedColumnName = "id")
     private User owner; // id владельца вещи
-    @Column(name = "request_id")
-    private Long request; //  id если вещь была создана по запросу другого пользователя, то в этом поле будет храниться ссылка на соответствующий запрос.
+    @ManyToOne
+    @JoinColumn(name = "request_id", referencedColumnName = "id")
+    private ItemRequest request; //  id если вещь была создана по запросу другого пользователя, то в этом поле будет храниться ссылка на соответствующий запрос.
     @Transient
     private Booking lastBooking;
     @Transient

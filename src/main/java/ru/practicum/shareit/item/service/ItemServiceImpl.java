@@ -14,11 +14,13 @@ import ru.practicum.shareit.item.dto.ItemMapper;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.CommentRepository;
 import ru.practicum.shareit.item.repository.ItemRepository;
+import ru.practicum.shareit.request.repository.ItemRequestRepository;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -30,6 +32,7 @@ public class ItemServiceImpl implements ItemService {
     private final UserRepository userRepository;
     private final BookingRepository bookingRepository;
     private final CommentRepository commentRepository;
+    private final ItemRequestRepository itemRequestRepository;
 
     @Transactional
     public ItemDto addItemDto(long userId, ItemDto itemDto) {
@@ -46,6 +49,9 @@ public class ItemServiceImpl implements ItemService {
         }
         if (!userRepository.existsById(userId)) {
             throw new NotFoundByIdException("User by id not found"); // 404
+        }
+        if (itemDto.getRequestId() != null) {
+            item.setRequest(itemRequestRepository.getReferenceById(itemDto.getRequestId()));
         }
         return ItemMapper.itemDto(itemRepository.save(item));
     }
@@ -96,6 +102,7 @@ public class ItemServiceImpl implements ItemService {
         List<ItemDto> itemDtoList = ItemMapper.getItemDtoList(itemRepository.getItemByOwner(user));
         return itemDtoList.stream()
                 .map(item -> getItemById(item.getId(), userId))
+                .sorted(Comparator.comparingLong(ItemDto::getId))
                 .collect(Collectors.toList());
     }
 
