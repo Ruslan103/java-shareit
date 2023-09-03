@@ -80,8 +80,10 @@ public class ItemServiceImpl implements ItemService {
             Item item = itemRepository.getReferenceById(itemId);
             List<Status> statuses = List.of(Status.APPROVED);
             if (item.getOwner() == userRepository.getReferenceById(userId)) {
-                Booking lastBooking = bookingRepository.findFirstByItemAndStatusIsInAndStartBeforeOrderByStartDesc(item, statuses, LocalDateTime.now());
-                Booking nextBooking = bookingRepository.findFirstByItemAndStatusIsInAndEndAfterOrderByStartAsc(item, statuses, LocalDateTime.now());
+                Booking lastBooking = bookingRepository
+                        .findFirstByItemAndStatusIsInAndStartBeforeOrderByStartDesc(item, statuses, LocalDateTime.now());
+                Booking nextBooking = bookingRepository
+                        .findFirstByItemAndStatusIsInAndEndAfterOrderByStartAsc(item, statuses, LocalDateTime.now());
                 item.setLastBooking(lastBooking);
                 if (lastBooking != nextBooking) {
                     item.setNextBooking(nextBooking);
