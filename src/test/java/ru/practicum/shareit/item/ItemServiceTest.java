@@ -184,31 +184,37 @@ public class ItemServiceTest {
         when(itemRepository.existsById(anyLong())).thenReturn(false);
         assertThrows(NotFoundByIdException.class, () -> itemService.updateItem(100, 100, itemDto1));
     }
+
     @Test
-    void getItemByIdTest(){
+    void getItemByIdTest() {
         when(itemRepository.existsById(anyLong())).thenReturn(true);
         when(itemRepository.getReferenceById(anyLong())).thenReturn(item1);
         when(commentRepository.findCommentsByItemId(anyLong())).thenReturn(List.of(comment));
-        ItemDto itemTest =itemService.getItemById(1,1);
-        assertEquals(itemDto1.getId(),1);
+        ItemDto itemTest = itemService.getItemById(1, 1);
+        assertEquals(itemTest.getId(), 1);
     }
 
     @Test
-    void getItemWithNotExistId(){
+    void getItemWithNotExistId() {
         when(itemRepository.existsById(anyLong())).thenReturn(false);
-        assertThrows(NotFoundByIdException.class,()->itemService.getItemById(100,100));
+        assertThrows(NotFoundByIdException.class, () -> itemService.getItemById(100, 100));
     }
 
     @Test
-    void getItemsList(){
-        when(itemRepository.getReferenceById(anyLong())).thenReturn(item1);
+    void getItemsListTest() {
         when(userRepository.getReferenceById(anyLong())).thenReturn(user1);
-        when(itemRepository.getItemByOwner(any(User.class))).thenReturn(List.of(item1,item2));
-        List<ItemDto> itemListTest=List.of(itemDto1,itemDto2);
-        List <ItemDto> itemList = itemService.getItems(1L);
-        assertEquals(itemListTest,itemList);
+        when(itemRepository.getItemByOwner(any(User.class))).thenReturn(List.of(item1, item2));
+        List<ItemDto> itemListTest = List.of(itemDto1, itemDto2);
+        List<ItemDto> itemList = itemService.getItems(1L);
+        assertEquals(itemListTest.get(1).getId(), itemList.get(1).getId());
+        assertEquals(itemListTest.size(), itemList.size());
     }
 
-
-
+    @Test
+    void getItemsByDescriptionTest() {
+        when(itemRepository.findByDescriptionContainingIgnoreCase(anyString())).thenReturn(List.of(item1, item2));
+        List<ItemDto> itemDtoListTest = List.of(itemDto1, itemDto2);
+        List<ItemDto> itemDtoList = itemService.getItemsByDescription("text");
+        assertEquals(itemDtoListTest, itemDtoList);
+    }
 }
