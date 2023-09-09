@@ -66,7 +66,7 @@ public class UserServiceTest {
     }
 
     @Test
-    void addUserWithWrongEmail(){
+    void addUserWithWrongEmail() {
         userDto1.setEmail(null);
         assertThrows(InvalidEmailException.class, () -> userService.addUser(userDto1));
     }

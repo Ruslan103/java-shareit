@@ -99,11 +99,24 @@ public class ItemServiceImpl implements ItemService {
     @Transactional(readOnly = true)
     public List<ItemDto> getItems(long userId) {
         User user = userRepository.getReferenceById(userId);
-        List<ItemDto> itemDtoList = ItemMapper.getItemDtoList(itemRepository.getItemByOwner(user));
-        return itemDtoList.stream()
-                .map(item -> getItemById(item.getId(), userId))
-                .sorted(Comparator.comparingLong(ItemDto::getId))
+        List<Item> itemDtoList = itemRepository.getItemByOwner(user).stream()
+                .peek(item -> {
+                    List<Status> statuses = List.of(Status.APPROVED);
+                    if (item.getOwner() == userRepository.getReferenceById(userId)) {
+                        Booking lastBooking = bookingRepository
+                                .findFirstByItemAndStatusIsInAndStartBeforeOrderByStartDesc(item, statuses, LocalDateTime.now());
+                        Booking nextBooking = bookingRepository
+                                .findFirstByItemAndStatusIsInAndEndAfterOrderByStartAsc(item, statuses, LocalDateTime.now());
+                        item.setLastBooking(lastBooking);
+                        if (lastBooking != nextBooking) {
+                            item.setNextBooking(nextBooking);
+                        }
+                    }
+                    item.setComments(commentRepository.findCommentsByItemId(item.getId()));
+                })
+                .sorted(Comparator.comparingLong(Item::getId))
                 .collect(Collectors.toList());
+        return ItemMapper.getItemDtoList(itemDtoList);
     }
 
     @Transactional(readOnly = true)
