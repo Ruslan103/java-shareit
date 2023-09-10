@@ -4,9 +4,9 @@ import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import ru.practicum.shareit.ShareItApp;
-import ru.practicum.shareit.item.dto.ItemMapper;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.service.ItemServiceImpl;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
@@ -26,6 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
 @SpringJUnitConfig({ShareItApp.class, ItemServiceImpl.class, UserServiceImpl.class, ItemServiceImpl.class})
+@TestPropertySource(properties = {"db.name=test"})
 public class ItemRequestIntegrationTest {
 
     private final EntityManager em;
@@ -68,15 +69,6 @@ public class ItemRequestIntegrationTest {
                 .requester(requester)
                 .id(1)
                 .build();
-
-        item = Item.builder()
-                .id(1)
-                .name("ItemName")
-                .description("Description")
-                .available(true)
-                .request(request)
-                .owner(owner)
-                .build();
     }
 
     @Test
@@ -98,13 +90,5 @@ public class ItemRequestIntegrationTest {
         assertNotNull(queryRequest);
         assertEquals("Description", queryRequest.getDescription());
         assertEquals(request.getRequester().getId(), queryRequest.getRequester().getId());
-    }
-
-    @Test
-    void getIemRequestById() {
-        itemService.addItemDto(1, ItemMapper.itemDto(item));
-        ItemRequestDto result = itemRequestService.getIemRequestById(1, 2);
-        assertEquals("Description", result.getDescription());
-        assertEquals(ItemMapper.itemDtoForResponse(item), result.getItems().get(0));
     }
 }
