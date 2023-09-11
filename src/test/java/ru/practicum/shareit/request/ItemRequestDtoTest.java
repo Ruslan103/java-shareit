@@ -44,7 +44,6 @@ public class ItemRequestDtoTest {
                 .available(true)
                 .requestId(1L)
                 .build();
-
         Object RequestMapper;
         ItemRequestDto itemRequestDto = ItemRequestDto.builder()
                 .items(Collections.emptyList())
@@ -57,6 +56,5 @@ public class ItemRequestDtoTest {
         assertThat(result).extractingJsonPathNumberValue("$.id").isEqualTo(1);
         assertThat(result).extractingJsonPathStringValue("$.description").isEqualTo("Description");
         assertThat(result).extractingJsonPathStringValue("$.created").isEqualTo(create.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")));
-
     }
 }
