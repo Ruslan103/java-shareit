@@ -7,6 +7,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.PageRequest;
+import ru.practicum.shareit.exception.LineNotNullException;
+import ru.practicum.shareit.exception.NotFoundByIdException;
+import ru.practicum.shareit.exception.RequestParameterException;
+import ru.practicum.shareit.exception.ValidationException;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
@@ -21,6 +25,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -120,6 +125,19 @@ public class RequestServiceTest {
     }
 
     @Test
+    void addItemRequestWithNotExistUser() {
+        when(userRepository.existsById(anyLong())).thenReturn(false);
+        assertThrows(NotFoundByIdException.class, () -> itemRequestService.addItemRequest(100, itemRequestDto));
+    }
+
+    @Test
+    void addItemRequestWithNullDescription() {
+        when(userRepository.existsById(anyLong())).thenReturn(true);
+        itemRequestDto.setDescription(null);
+        assertThrows(LineNotNullException.class, () -> itemRequestService.addItemRequest(1, itemRequestDto));
+    }
+
+    @Test
     void getItemRequests() {
         when(userRepository.existsById(anyLong())).thenReturn(true);
         when(itemRequestRepository.findRequestByRequesterId(anyLong())).thenReturn(List.of(itemRequest, itemRequest2));
@@ -130,11 +148,35 @@ public class RequestServiceTest {
     }
 
     @Test
+    void getItemRequestsWithNotExistUser() {
+        when(userRepository.existsById(anyLong())).thenReturn(false);
+        assertThrows(NotFoundByIdException.class, () -> itemRequestService.getItemRequests(100));
+    }
+
+    @Test
+    void getAllRequestWithWrongFrom() {
+        assertThrows(RequestParameterException.class, () -> itemRequestService.getAllRequests(1, -1, 5));
+    }
+
+    @Test
     void getIemRequestById() {
         when(userRepository.existsById(anyLong())).thenReturn(true);
         when(itemRequestRepository.existsById(anyLong())).thenReturn(true);
         when(itemRequestRepository.getReferenceById(anyLong())).thenReturn(itemRequest);
         ItemRequestDto itemRequestDtoTest = itemRequestService.getIemRequestById(1, 1);
         assertEquals(itemRequestDtoTest.getId(), itemRequest.getId());
+    }
+
+    @Test
+    void getIemRequestByIdWithNotExistUser() {
+        when(userRepository.existsById(anyLong())).thenReturn(false);
+        assertThrows(ValidationException.class, () -> itemRequestService.getIemRequestById(100, 100));
+    }
+
+    @Test
+    void getIemRequestByIdWithNotExistURequest() {
+        when(userRepository.existsById(anyLong())).thenReturn(true);
+        when(itemRequestRepository.existsById(anyLong())).thenReturn(false);
+        assertThrows(NotFoundByIdException.class, () -> itemRequestService.getIemRequestById(100, 100));
     }
 }
