@@ -44,7 +44,6 @@ public class ItemRequestDtoTest {
                 .available(true)
                 .requestId(1L)
                 .build();
-        Object RequestMapper;
         ItemRequestDto itemRequestDto = ItemRequestDto.builder()
                 .items(Collections.emptyList())
                 .id(itemRequest.getId())
