@@ -15,7 +15,7 @@ import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.model.Status;
 import ru.practicum.shareit.booking.repository.BookingRepository;
 import ru.practicum.shareit.booking.service.BookingServiceImpl;
-import ru.practicum.shareit.exception.NotFoundByIdException;
+import ru.practicum.shareit.exception.*;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.ItemMapper;
 import ru.practicum.shareit.item.model.Comment;
@@ -151,12 +151,77 @@ public class BookingServiceTest {
     }
 
     @Test
+    void addBookingWithWrongUser() {
+        when(itemRepository.existsById(anyLong())).thenReturn(true);
+        when(itemRepository.getReferenceById(anyLong())).thenReturn(item1);
+        assertThrows(NotFoundByIdException.class, () -> bookingService.addBooking(1, bookingDtoRequest));
+    }
+
+    @Test
+    void addBookingWithWrongAvailable() {
+        when(itemRepository.existsById(anyLong())).thenReturn(true);
+        when(itemRepository.getReferenceById(anyLong())).thenReturn(item2);
+        item2.setAvailable(false);
+        assertThrows(ItemUnavailableException.class, () -> bookingService.addBooking(1, bookingDtoRequest));
+    }
+
+    @Test
+    void addBookingWithExistUser() {
+        when(itemRepository.existsById(anyLong())).thenReturn(true);
+        when(itemRepository.getReferenceById(anyLong())).thenReturn(item2);
+        when(userRepository.existsById(anyLong())).thenReturn(false);
+        assertThrows(NotFoundByIdException.class, () -> bookingService.addBooking(1, bookingDtoRequest));
+    }
+
+    @Test
+    void addBookingWithWrongStart() {
+        when(itemRepository.existsById(anyLong())).thenReturn(true);
+        when(itemRepository.getReferenceById(anyLong())).thenReturn(item2);
+        when(userRepository.existsById(anyLong())).thenReturn(true);
+        bookingDtoRequest.setStart(null);
+        assertThrows(LineNotNullException.class, () -> bookingService.addBooking(1, bookingDtoRequest));
+    }
+
+    @Test
+    void addBookingWithEndEqualStart() {
+        when(itemRepository.existsById(anyLong())).thenReturn(true);
+        when(itemRepository.getReferenceById(anyLong())).thenReturn(item2);
+        when(userRepository.existsById(anyLong())).thenReturn(true);
+        bookingDtoRequest.setEnd(bookingDtoRequest.getStart());
+        assertThrows(BookingTimeException.class, () -> bookingService.addBooking(1, bookingDtoRequest));
+    }
+
+    @Test
+    void addBookingWithWrongEnd() {
+        when(itemRepository.existsById(anyLong())).thenReturn(true);
+        when(itemRepository.getReferenceById(anyLong())).thenReturn(item2);
+        when(userRepository.existsById(anyLong())).thenReturn(true);
+        bookingDtoRequest.setEnd(LocalDateTime.now().minusDays(1));
+        bookingDtoRequest.setStart(LocalDateTime.now());
+        assertThrows(BookingTimeException.class, () -> bookingService.addBooking(1, bookingDtoRequest));
+    }
+
+    @Test
     void updateBooking() {
         when(bookingRepository.getReferenceById(anyLong())).thenReturn(booking1);
         when(bookingRepository.save(any(Booking.class))).thenReturn(booking1);
         BookingDtoResponse bookingDtoResponse = bookingService.updateBooking(1, 1, true);
         booking1.setStatus(Status.APPROVED);
         assertEquals(bookingDtoResponse.getStatus(), Status.APPROVED);
+    }
+
+    @Test
+    void updateBookingWithStatusApproved() {
+        when(bookingRepository.getReferenceById(anyLong())).thenReturn(booking1);
+        booking1.setStatus(Status.APPROVED);
+        assertThrows(StatusApprovedException.class, () -> bookingService.updateBooking(1, 1, true));
+    }
+
+    @Test
+    void updateBookingWithNotOwner() {
+        when(bookingRepository.getReferenceById(anyLong())).thenReturn(booking2);
+        booking2.setStatus(Status.WAITING);
+        assertThrows(NotFoundByIdException.class, () -> bookingService.updateBooking(3, 1, true));
     }
 
     @Test
