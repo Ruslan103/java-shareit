@@ -15,6 +15,7 @@ import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.model.Status;
 import ru.practicum.shareit.booking.repository.BookingRepository;
 import ru.practicum.shareit.booking.service.BookingServiceImpl;
+import ru.practicum.shareit.exception.NotFoundByIdException;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.ItemMapper;
 import ru.practicum.shareit.item.model.Comment;
@@ -28,6 +29,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -143,8 +145,13 @@ public class BookingServiceTest {
     }
 
     @Test
-    void updateBooking() {
+    void addBookingWithNotExistItem() {
+        when(itemRepository.existsById(anyLong())).thenReturn(false);
+        assertThrows(NotFoundByIdException.class, () -> bookingService.addBooking(1, bookingDtoRequest));
+    }
 
+    @Test
+    void updateBooking() {
         when(bookingRepository.getReferenceById(anyLong())).thenReturn(booking1);
         when(bookingRepository.save(any(Booking.class))).thenReturn(booking1);
         BookingDtoResponse bookingDtoResponse = bookingService.updateBooking(1, 1, true);
