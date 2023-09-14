@@ -8,6 +8,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ru.practicum.shareit.exception.InvalidEmailException;
+import ru.practicum.shareit.exception.NotFoundByIdException;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.dto.UserMapper;
 import ru.practicum.shareit.user.model.User;
@@ -90,6 +91,18 @@ public class UserServiceTest {
     }
 
     @Test
+    void updateUserWithNullEmail() {
+        user1.setName("NewName");
+        when(userRepository.save(any(User.class))).thenReturn(user1);
+        when(userRepository.getReferenceById(anyLong())).thenReturn(user1);
+        userDto1.setEmail(null);
+        userDto1.setName(null);
+        UserDto userDtoTest = userService.updateUser(1, userDto1);
+        assertEquals(userDtoTest.getName(), "NewName");
+        verify(userRepository, times(1)).save(user1);
+    }
+
+    @Test
     void deleteUserTest() {
         userService.deleteUser(1);
         verify(userRepository, times(1)).deleteById(1L);
@@ -103,6 +116,12 @@ public class UserServiceTest {
         assertEquals(user1.getId(), userTest.getId());
         assertEquals(user1.getName(), userTest.getName());
         assertEquals(user1.getEmail(), userTest.getEmail());
+    }
+
+    @Test
+    void getUserByIdWithNotFoundUser() {
+        when(userRepository.existsById(anyLong())).thenReturn(false);
+        assertThrows(NotFoundByIdException.class, () -> userService.getUserById(100));
     }
 
     @Test

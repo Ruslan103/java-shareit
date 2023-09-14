@@ -1,8 +1,6 @@
 package ru.practicum.shareit.user.model;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.Objects;
@@ -12,6 +10,8 @@ import java.util.Objects;
 @Table(name = "users")
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class User {
 
     @Id
@@ -21,15 +21,6 @@ public class User {
     private String name;
     @Column(name = "email", nullable = false, unique = true)
     private String email;
-
-    public User(long id, String name, String email) {
-        this.id = id;
-        this.name = name;
-        this.email = email;
-    }
-
-    public User() {
-    }
 
     @Override
     public boolean equals(Object o) {
