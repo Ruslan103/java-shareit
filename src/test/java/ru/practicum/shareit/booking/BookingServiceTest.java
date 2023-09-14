@@ -292,17 +292,6 @@ public class BookingServiceTest {
         assertEquals(bookingDtoResponseList.get(1).getId(), bookingDtoResponseListTest.get(1).getId());
     }
 
-    //    @Test
-//    void findBookingsByBookerAndStatusWithCurrentState() {
-//        when(userRepository.existsById(anyLong())).thenReturn(true);
-//        when(userRepository.getReferenceById(anyLong())).thenReturn(user1);
-//        when(bookingRepository.findBookingsByBookerAndStatusIsIn(eq(user1),eq(List.of(Status.REJECTED, Status.APPROVED)),any(Pageable.class))).thenReturn(List.of(booking1, booking2));
-//        Collection <BookingDtoResponse> bookingDtoResponseList = bookingService.findBookingsByBookerAndStatus(1, "CURRENT", 0, 5);
-//        List<Booking> bookingDtoResponseListTest = List.of(booking1, booking2);
-//        assertEquals(bookingDtoResponseList.size(), bookingDtoResponseListTest.size());
-//        //assertEquals(bookingDtoResponseList.get(0).getId(), bookingDtoResponseListTest.get(0).getId());
-//       // assertEquals(bookingDtoResponseList.get(1).getId(), bookingDtoResponseListTest.get(1).getId());
-//    }
     @Test
     void findBookingsByBookerAndStatusWithNotExistUser() {
         when(userRepository.existsById(anyLong())).thenReturn(false);
@@ -320,6 +309,48 @@ public class BookingServiceTest {
         when(userRepository.existsById(anyLong())).thenReturn(true);
         when(bookingRepository.findBookingsByOwner(anyLong(), any(Pageable.class))).thenReturn(List.of(booking1, booking2));
         List<BookingDtoResponse> bookingDtoResponseList = bookingService.findBookingsByOwnerAndStatus(1, "ALL", 1, 5);
+        List<Booking> bookingDtoResponseListTest = List.of(booking1, booking2);
+        assertEquals(bookingDtoResponseListTest.size(), bookingDtoResponseList.size());
+        assertEquals(bookingDtoResponseList.get(0).getId(), bookingDtoResponseListTest.get(0).getId());
+        assertEquals(bookingDtoResponseList.get(1).getId(), bookingDtoResponseListTest.get(1).getId());
+    }
+
+    @Test
+    void findBookingsByOwnerAndStatusWithNotExistUser() {
+        when(userRepository.existsById(anyLong())).thenReturn(false);
+        assertThrows(NotFoundByIdException.class, () -> bookingService.findBookingsByOwnerAndStatus(100, "ALL", -1, 5));
+    }
+
+    @Test
+    void findBookingsByOwnerAndStatusWithWrongFrom() {
+        when(userRepository.existsById(anyLong())).thenReturn(true);
+        assertThrows(RequestParameterException.class, () -> bookingService.findBookingsByOwnerAndStatus(100, "ALL", -1, 5));
+    }
+    @Test
+    void findBookingsByOwnerAndStatusWithFutureState() {
+        when(userRepository.existsById(anyLong())).thenReturn(true);
+        when(bookingRepository.findBookingsByOwnerAndStatus(anyLong(),anyList(), any(Pageable.class))).thenReturn(List.of(booking1, booking2));
+        List<BookingDtoResponse> bookingDtoResponseList = bookingService.findBookingsByOwnerAndStatus(1, "FUTURE", 1, 5);
+        List<Booking> bookingDtoResponseListTest = List.of(booking1, booking2);
+        assertEquals(bookingDtoResponseListTest.size(), bookingDtoResponseList.size());
+        assertEquals(bookingDtoResponseList.get(0).getId(), bookingDtoResponseListTest.get(0).getId());
+        assertEquals(bookingDtoResponseList.get(1).getId(), bookingDtoResponseListTest.get(1).getId());
+    }
+    @Test
+    void findBookingsByOwnerAndStatusWithWaitingState() {
+        when(userRepository.existsById(anyLong())).thenReturn(true);
+        when(bookingRepository.findBookingsByOwnerAndStatus(anyLong(),anyList(), any(Pageable.class))).thenReturn(List.of(booking1, booking2));
+        List<BookingDtoResponse> bookingDtoResponseList = bookingService.findBookingsByOwnerAndStatus(1, "WAITING", 1, 5);
+        List<Booking> bookingDtoResponseListTest = List.of(booking1, booking2);
+        assertEquals(bookingDtoResponseListTest.size(), bookingDtoResponseList.size());
+        assertEquals(bookingDtoResponseList.get(0).getId(), bookingDtoResponseListTest.get(0).getId());
+        assertEquals(bookingDtoResponseList.get(1).getId(), bookingDtoResponseListTest.get(1).getId());
+    }
+    @Test
+    void findBookingsByOwnerAndStatusWithRejectedState() {
+        when(userRepository.existsById(anyLong())).thenReturn(true);
+        when(bookingRepository.findBookingsByOwnerAndStatus(anyLong(),anyList(), any(Pageable.class))).thenReturn(List.of(booking1, booking2));
+        List<BookingDtoResponse> bookingDtoResponseList = bookingService.findBookingsByOwnerAndStatus(1, "REJECTED", 1, 5);
         List<Booking> bookingDtoResponseListTest = List.of(booking1, booking2);
         assertEquals(bookingDtoResponseListTest.size(), bookingDtoResponseList.size());
         assertEquals(bookingDtoResponseList.get(0).getId(), bookingDtoResponseListTest.get(0).getId());
