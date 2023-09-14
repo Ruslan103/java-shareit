@@ -128,9 +128,4 @@ public class ItemServiceImpl implements ItemService {
                 : new ArrayList<>();
         return ItemMapper.getItemDtoList(items);
     }
-
-    @Transactional
-    public void deleteItemById(long itemId) {
-        itemRepository.deleteById(itemId);
-    }
 }

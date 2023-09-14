@@ -195,6 +195,20 @@ public class ItemServiceTest {
     }
 
     @Test
+    void getItemById() {
+        when(userRepository.getReferenceById(anyLong())).thenReturn(user1);
+        when(itemRepository.existsById(anyLong())).thenReturn(true);
+        when(itemRepository.getReferenceById(anyLong())).thenReturn(item1);
+        when(commentRepository.findCommentsByItemId(anyLong())).thenReturn(List.of(comment));
+        when(bookingRepository.findFirstByItemAndStatusIsInAndStartBeforeOrderByStartDesc(any(Item.class), anyList(), any(LocalDateTime.class)))
+                .thenReturn(firstBooking);
+        when(bookingRepository.findFirstByItemAndStatusIsInAndEndAfterOrderByStartAsc(any(Item.class), anyList(), any(LocalDateTime.class)))
+                .thenReturn(firstBooking);
+        ItemDto itemTest = itemService.getItemById(1, 1);
+        assertEquals(itemTest.getId(), 1);
+    }
+
+    @Test
     void getItemWithNotExistId() {
         when(itemRepository.existsById(anyLong())).thenReturn(false);
         assertThrows(NotFoundByIdException.class, () -> itemService.getItemById(100, 100));
