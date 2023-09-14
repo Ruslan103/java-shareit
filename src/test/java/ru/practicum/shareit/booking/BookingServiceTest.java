@@ -293,6 +293,34 @@ public class BookingServiceTest {
     }
 
     @Test
+    void findBookingsByBookerAndStatusWithCurrentState() {
+        when(userRepository.existsById(anyLong())).thenReturn(true);
+        when(userRepository.getReferenceById(anyLong())).thenReturn(user1);
+        booking1.setStart(LocalDateTime.now().minusMinutes(5));
+        booking2.setEnd(LocalDateTime.now().plusMinutes(5));
+        when(bookingRepository.findBookingsByBookerAndStatusIsIn(any(), any(), any())).thenReturn(List.of(booking1, booking2));
+        List<BookingDtoResponse> bookingDtoResponseList = bookingService.findBookingsByBookerAndStatus(1, "CURRENT", 1, 5);
+        List<Booking> bookingDtoResponseListTest = List.of(booking1, booking2);
+        assertEquals(bookingDtoResponseList.size(), bookingDtoResponseListTest.size());
+        assertEquals(bookingDtoResponseList.get(0).getId(), bookingDtoResponseListTest.get(0).getId());
+        assertEquals(bookingDtoResponseList.get(1).getId(), bookingDtoResponseListTest.get(1).getId());
+    }
+
+    @Test
+    void findBookingsByBookerAndStatusWithPasttate() {
+        when(userRepository.existsById(anyLong())).thenReturn(true);
+        when(userRepository.getReferenceById(anyLong())).thenReturn(user1);
+        booking2.setEnd(LocalDateTime.now().minusMinutes(5));
+        booking1.setEnd(LocalDateTime.now().minusMinutes(5));
+        when(bookingRepository.findBookingsByBookerAndStatusIsIn(any(), any(), any())).thenReturn(List.of(booking1, booking2));
+        List<BookingDtoResponse> bookingDtoResponseList = bookingService.findBookingsByBookerAndStatus(1, "PAST", 1, 5);
+        List<Booking> bookingDtoResponseListTest = List.of(booking1, booking2);
+        assertEquals(bookingDtoResponseList.size(), bookingDtoResponseListTest.size());
+        assertEquals(bookingDtoResponseList.get(0).getId(), bookingDtoResponseListTest.get(0).getId());
+        assertEquals(bookingDtoResponseList.get(1).getId(), bookingDtoResponseListTest.get(1).getId());
+    }
+
+    @Test
     void findBookingsByBookerAndStatusWithNotExistUser() {
         when(userRepository.existsById(anyLong())).thenReturn(false);
         assertThrows(NotFoundByIdException.class, () -> bookingService.findBookingsByBookerAndStatus(100, "ALL", 1, 5));
@@ -356,6 +384,36 @@ public class BookingServiceTest {
         List<BookingDtoResponse> bookingDtoResponseList = bookingService.findBookingsByOwnerAndStatus(1, "REJECTED", 1, 5);
         List<Booking> bookingDtoResponseListTest = List.of(booking1, booking2);
         assertEquals(bookingDtoResponseListTest.size(), bookingDtoResponseList.size());
+        assertEquals(bookingDtoResponseList.get(0).getId(), bookingDtoResponseListTest.get(0).getId());
+        assertEquals(bookingDtoResponseList.get(1).getId(), bookingDtoResponseListTest.get(1).getId());
+    }
+
+    @Test
+    void findBookingsByOwnerAndStatusWithCurrentState() {
+        when(userRepository.existsById(anyLong())).thenReturn(true);
+        booking1.setStart(LocalDateTime.now().minusMinutes(5));
+        booking1.setEnd(LocalDateTime.now().plusMinutes(5));
+        booking2.setStart(LocalDateTime.now().minusMinutes(5));
+        booking2.setEnd(LocalDateTime.now().plusMinutes(5));
+        when(bookingRepository.findBookingsByOwnerAndStatus(anyLong(), anyList(), any(Pageable.class))).thenReturn(List.of(booking1, booking2));
+        List<BookingDtoResponse> bookingDtoResponseList = bookingService.findBookingsByOwnerAndStatus(1, "CURRENT", 1, 5);
+        List<Booking> bookingDtoResponseListTest = List.of(booking1, booking2);
+        assertEquals(bookingDtoResponseList.size(), bookingDtoResponseListTest.size());
+        assertEquals(bookingDtoResponseList.get(0).getId(), bookingDtoResponseListTest.get(0).getId());
+        assertEquals(bookingDtoResponseList.get(1).getId(), bookingDtoResponseListTest.get(1).getId());
+    }
+
+    @Test
+    void findBookingsByOwnerAndStatusWithPastState() {
+        when(userRepository.existsById(anyLong())).thenReturn(true);
+        booking1.setStart(LocalDateTime.now().minusMinutes(5));
+        booking1.setEnd(LocalDateTime.now().minusMinutes(4));
+        booking2.setStart(LocalDateTime.now().minusMinutes(5));
+        booking2.setEnd(LocalDateTime.now().minusMinutes(1));
+        when(bookingRepository.findBookingsByOwnerAndStatus(anyLong(), anyList(), any(Pageable.class))).thenReturn(List.of(booking1, booking2));
+        List<BookingDtoResponse> bookingDtoResponseList = bookingService.findBookingsByOwnerAndStatus(1, "PAST", 1, 5);
+        List<Booking> bookingDtoResponseListTest = List.of(booking1, booking2);
+        assertEquals(bookingDtoResponseList.size(), bookingDtoResponseListTest.size());
         assertEquals(bookingDtoResponseList.get(0).getId(), bookingDtoResponseListTest.get(0).getId());
         assertEquals(bookingDtoResponseList.get(1).getId(), bookingDtoResponseListTest.get(1).getId());
     }
