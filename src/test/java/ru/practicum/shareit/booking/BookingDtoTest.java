@@ -7,6 +7,7 @@ import org.springframework.boot.test.autoconfigure.json.JsonTest;
 import org.springframework.boot.test.json.JacksonTester;
 import org.springframework.boot.test.json.JsonContent;
 import ru.practicum.shareit.booking.dto.BookingDtoResponse;
+import ru.practicum.shareit.booking.dto.LastAndNextBookingDto;
 import ru.practicum.shareit.booking.model.Status;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.model.User;
@@ -21,6 +22,8 @@ class BookingDtoTest {
 
     @Autowired
     private JacksonTester<BookingDtoResponse> json;
+    @Autowired
+    private JacksonTester<LastAndNextBookingDto> lastAndNextBookingJson;
 
     @Test
     void testBookingDto() throws Exception {
@@ -57,5 +60,18 @@ class BookingDtoTest {
         assertThat(result).extractingJsonPathStringValue("$.booker.name").isEqualTo("Name");
         assertThat(result).extractingJsonPathNumberValue("$.item.id").isEqualTo(1);
         assertThat(result).extractingJsonPathStringValue("$.item.name").isEqualTo("ItemName");
+
+
+    }
+
+    @Test
+    void lastAndNextBooking() throws Exception {
+        LastAndNextBookingDto lastAndNextBookingDto = LastAndNextBookingDto.builder()
+                .id(1)
+                .bookerId(1)
+                .build();
+        JsonContent<LastAndNextBookingDto> resultLastAndNext = lastAndNextBookingJson.write(lastAndNextBookingDto);
+        assertThat(resultLastAndNext).extractingJsonPathNumberValue("$.id").isEqualTo(1);
+        assertThat(resultLastAndNext).extractingJsonPathNumberValue("$.bookerId").isEqualTo(1);
     }
 }
