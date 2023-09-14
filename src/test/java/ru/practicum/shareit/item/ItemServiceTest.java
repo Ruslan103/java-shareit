@@ -28,6 +28,7 @@ import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -64,7 +65,8 @@ public class ItemServiceTest {
     private Comment comment;
     private CommentDto commentDto;
     private ItemRequest itemRequest;
-    private Booking firstBooking;
+    private Booking booking1;
+    private Booking booking2;
     private PageRequest pageRequest;
 
     @BeforeEach
@@ -120,13 +122,21 @@ public class ItemServiceTest {
 
         commentDto = CommentMapper.toCommentDto(comment);
 
-        firstBooking = Booking.builder()
+        booking1 = Booking.builder()
                 .id(1)
                 .start(LocalDateTime.now())
                 .end(LocalDateTime.now())
                 .item(item1)
                 .booker(user1)
                 .status(Status.APPROVED)
+                .build();
+        booking2 = Booking.builder()
+                .id(1)
+                .start(LocalDateTime.now())
+                .end(LocalDateTime.now())
+                .item(item1)
+                .booker(user1)
+                .status(Status.WAITING)
                 .build();
     }
 
@@ -201,9 +211,9 @@ public class ItemServiceTest {
         when(itemRepository.getReferenceById(anyLong())).thenReturn(item1);
         when(commentRepository.findCommentsByItemId(anyLong())).thenReturn(List.of(comment));
         when(bookingRepository.findFirstByItemAndStatusIsInAndStartBeforeOrderByStartDesc(any(Item.class), anyList(), any(LocalDateTime.class)))
-                .thenReturn(firstBooking);
+                .thenReturn(booking1);
         when(bookingRepository.findFirstByItemAndStatusIsInAndEndAfterOrderByStartAsc(any(Item.class), anyList(), any(LocalDateTime.class)))
-                .thenReturn(firstBooking);
+                .thenReturn(booking2);
         ItemDto itemTest = itemService.getItemById(1, 1);
         assertEquals(itemTest.getId(), 1);
     }
@@ -230,5 +240,11 @@ public class ItemServiceTest {
         List<ItemDto> itemDtoListTest = List.of(itemDto1, itemDto2);
         List<ItemDto> itemDtoList = itemService.getItemsByDescription("text");
         assertEquals(itemDtoListTest, itemDtoList);
+    }
+
+    @Test
+    void getItemsByEmptyDescriptionTest() {
+        List<ItemDto> itemDtoList = itemService.getItemsByDescription("");
+        assertEquals(itemDtoList, new ArrayList<>());
     }
 }
