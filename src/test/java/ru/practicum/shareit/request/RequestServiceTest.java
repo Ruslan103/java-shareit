@@ -6,7 +6,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import ru.practicum.shareit.exception.LineNotNullException;
 import ru.practicum.shareit.exception.NotFoundByIdException;
 import ru.practicum.shareit.exception.RequestParameterException;
@@ -151,6 +153,13 @@ public class RequestServiceTest {
     void getItemRequestsWithNotExistUser() {
         when(userRepository.existsById(anyLong())).thenReturn(false);
         assertThrows(NotFoundByIdException.class, () -> itemRequestService.getItemRequests(100));
+    }
+
+    @Test
+    void getAllRequest() {
+        when(itemRequestRepository.findAll(any(Pageable.class))).thenReturn(new PageImpl<>(List.of(itemRequest), pageRequest, 1));
+        List<ItemRequestDto> itemRequestList = itemRequestService.getAllRequests(2, 1, 5);
+        assertEquals(itemRequestList.size(), 1);
     }
 
     @Test
