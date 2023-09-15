@@ -93,10 +93,7 @@ public class BookingServiceImpl implements BookingService {
         if (!userRepository.existsById(bookerId)) {
             throw new NotFoundByIdException("User by id not found");
         }
-        if (from < 0) {
-            throw new RequestParameterException("Invalid request parameter");
-        }
-        Pageable pageable = PageRequest.of(from / size, size, Sort.by("start").descending());
+        Pageable pageable = getPageable(from, size);
         User booker = userRepository.getReferenceById(bookerId);
         List<Booking> bookings = null;
         State enumState = State.getEnum(state);
@@ -139,10 +136,7 @@ public class BookingServiceImpl implements BookingService {
         if (!userRepository.existsById(ownerId)) {
             throw new NotFoundByIdException("User by id not found");
         }
-        if (from < 0) {
-            throw new RequestParameterException("Invalid request parameter");
-        }
-        Pageable pageable = PageRequest.of(from / size, size, Sort.by("start").descending());
+        Pageable pageable = getPageable(from, size);
         List<Booking> bookings = null;
         State enumState = State.getEnum(state);
         switch (enumState) {
@@ -177,5 +171,12 @@ public class BookingServiceImpl implements BookingService {
                 break;
         }
         return BookingMapper.bookingDtoResponseList(bookings);
+    }
+
+    private static Pageable getPageable(int from, int size) {
+        if (from < 0) {
+            throw new RequestParameterException("Invalid request parameter");
+        }
+        return PageRequest.of(from / size, size, Sort.by("start").descending());
     }
 }

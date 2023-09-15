@@ -20,7 +20,8 @@ public class ItemMapper {
                     .nextBooking(item.getNextBooking() != null ? BookingMapper.toLastAndNextBookingDto(item.getNextBooking()) : null)
                     .comments(item.getComments())
                     .build();
-        } else {
+        }
+        {
             return ItemDto.builder()
                     .id(item.getId())
                     .name(item.getName())
