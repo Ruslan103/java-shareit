@@ -21,19 +21,17 @@ public class ItemMapper {
                     .comments(item.getComments())
                     .build();
         }
-        {
-            return ItemDto.builder()
-                    .id(item.getId())
-                    .name(item.getName())
-                    .description(item.getDescription())
-                    .available(item.getAvailable())
-                    .ownerId(item.getOwner().getId())
-                    .lastBooking(item.getLastBooking() != null ? BookingMapper.toLastAndNextBookingDto(item.getLastBooking()) : null)
-                    .nextBooking(item.getNextBooking() != null ? BookingMapper.toLastAndNextBookingDto(item.getNextBooking()) : null)
-                    .comments(item.getComments())
-                    .requestId(item.getRequest().getId())
-                    .build();
-        }
+        return ItemDto.builder()
+                .id(item.getId())
+                .name(item.getName())
+                .description(item.getDescription())
+                .available(item.getAvailable())
+                .ownerId(item.getOwner().getId())
+                .lastBooking(item.getLastBooking() != null ? BookingMapper.toLastAndNextBookingDto(item.getLastBooking()) : null)
+                .nextBooking(item.getNextBooking() != null ? BookingMapper.toLastAndNextBookingDto(item.getNextBooking()) : null)
+                .comments(item.getComments())
+                .requestId(item.getRequest().getId())
+                .build();
     }
 
     public static Item toItem(UserRepository userRepository, long userId, ItemDto itemDto) {
