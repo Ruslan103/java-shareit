@@ -23,13 +23,4 @@ public class ItemDto {
     private LastAndNextBookingDto lastBooking;
     private LastAndNextBookingDto nextBooking;
     private List<Comment> comments;
-
-    public ItemDto(long id, String name, String description, Boolean available, Long owner, Long request) {
-        this.id = id;
-        this.name = name;
-        this.description = description;
-        this.available = available;
-        this.ownerId = owner;
-        this.requestId = request;
-    }
 }
