@@ -165,7 +165,7 @@ class ItemRequestControllerTest {
 
     @Test
     void getRequestById() throws Exception {
-        when(itemRequestService.getIemRequestById(anyLong(), anyLong())).thenReturn(itemRequestDto2);
+        when(itemRequestService.getItemRequestById(anyLong(), anyLong())).thenReturn(itemRequestDto2);
 
         mvc.perform(get("/requests/{requestId}", itemRequestDto2.getId())
                         .content(mapper.writeValueAsString(itemRequestDto1))

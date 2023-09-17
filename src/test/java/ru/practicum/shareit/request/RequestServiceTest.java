@@ -172,20 +172,20 @@ public class RequestServiceTest {
         when(userRepository.existsById(anyLong())).thenReturn(true);
         when(itemRequestRepository.existsById(anyLong())).thenReturn(true);
         when(itemRequestRepository.getReferenceById(anyLong())).thenReturn(itemRequest);
-        ItemRequestDto itemRequestDtoTest = itemRequestService.getIemRequestById(1, 1);
+        ItemRequestDto itemRequestDtoTest = itemRequestService.getItemRequestById(1, 1);
         assertEquals(itemRequestDtoTest.getId(), itemRequest.getId());
     }
 
     @Test
     void getIemRequestByIdWithNotExistUser() {
         when(userRepository.existsById(anyLong())).thenReturn(false);
-        assertThrows(ValidationException.class, () -> itemRequestService.getIemRequestById(100, 100));
+        assertThrows(ValidationException.class, () -> itemRequestService.getItemRequestById(100, 100));
     }
 
     @Test
     void getIemRequestByIdWithNotExistURequest() {
         when(userRepository.existsById(anyLong())).thenReturn(true);
         when(itemRequestRepository.existsById(anyLong())).thenReturn(false);
-        assertThrows(NotFoundByIdException.class, () -> itemRequestService.getIemRequestById(100, 100));
+        assertThrows(NotFoundByIdException.class, () -> itemRequestService.getItemRequestById(100, 100));
     }
 }

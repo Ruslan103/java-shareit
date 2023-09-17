@@ -62,7 +62,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
     }
 
     @Transactional(readOnly = true)
-    public ItemRequestDto getIemRequestById(long itemRequestId, long userId) {
+    public ItemRequestDto getItemRequestById(long itemRequestId, long userId) {
         if (!userRepository.existsById(userId)) {
             throw new ValidationException("User by id not found"); // 404
         }
