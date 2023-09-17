@@ -8,28 +8,29 @@ import ru.practicum.shareit.booking.model.Status;
 import ru.practicum.shareit.booking.repository.BookingRepository;
 import ru.practicum.shareit.exception.LineNotNullException;
 import ru.practicum.shareit.exception.NotFoundByIdException;
-import ru.practicum.shareit.item.ItemStorage;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.ItemMapper;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.CommentRepository;
 import ru.practicum.shareit.item.repository.ItemRepository;
+import ru.practicum.shareit.request.repository.ItemRequestRepository;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class ItemServiceImpl implements ItemService {
-    private final ItemStorage itemStorage;
     private final ItemRepository itemRepository;
     private final UserRepository userRepository;
     private final BookingRepository bookingRepository;
     private final CommentRepository commentRepository;
+    private final ItemRequestRepository itemRequestRepository;
 
     @Transactional
     public ItemDto addItemDto(long userId, ItemDto itemDto) {
@@ -46,6 +47,9 @@ public class ItemServiceImpl implements ItemService {
         }
         if (!userRepository.existsById(userId)) {
             throw new NotFoundByIdException("User by id not found"); // 404
+        }
+        if (itemDto.getRequestId() != null) {
+            item.setRequest(itemRequestRepository.getReferenceById(itemDto.getRequestId()));
         }
         return ItemMapper.itemDto(itemRepository.save(item));
     }
@@ -76,8 +80,10 @@ public class ItemServiceImpl implements ItemService {
             Item item = itemRepository.getReferenceById(itemId);
             List<Status> statuses = List.of(Status.APPROVED);
             if (item.getOwner() == userRepository.getReferenceById(userId)) {
-                Booking lastBooking = bookingRepository.findFirstByItemAndStatusIsInAndStartBeforeOrderByStartDesc(item, statuses, LocalDateTime.now());
-                Booking nextBooking = bookingRepository.findFirstByItemAndStatusIsInAndEndAfterOrderByStartAsc(item, statuses, LocalDateTime.now());
+                Booking lastBooking = bookingRepository
+                        .findFirstByItemAndStatusIsInAndStartBeforeOrderByStartDesc(item, statuses, LocalDateTime.now());
+                Booking nextBooking = bookingRepository
+                        .findFirstByItemAndStatusIsInAndEndAfterOrderByStartAsc(item, statuses, LocalDateTime.now());
                 item.setLastBooking(lastBooking);
                 if (lastBooking != nextBooking) {
                     item.setNextBooking(nextBooking);
@@ -93,10 +99,24 @@ public class ItemServiceImpl implements ItemService {
     @Transactional(readOnly = true)
     public List<ItemDto> getItems(long userId) {
         User user = userRepository.getReferenceById(userId);
-        List<ItemDto> itemDtoList = ItemMapper.getItemDtoList(itemRepository.getItemByOwner(user));
-        return itemDtoList.stream()
-                .map(item -> getItemById(item.getId(), userId))
+        List<Item> itemDtoList = itemRepository.getItemByOwner(user).stream()
+                .peek(item -> {
+                    List<Status> statuses = List.of(Status.APPROVED);
+                    if (item.getOwner() == userRepository.getReferenceById(userId)) {
+                        Booking lastBooking = bookingRepository
+                                .findFirstByItemAndStatusIsInAndStartBeforeOrderByStartDesc(item, statuses, LocalDateTime.now());
+                        Booking nextBooking = bookingRepository
+                                .findFirstByItemAndStatusIsInAndEndAfterOrderByStartAsc(item, statuses, LocalDateTime.now());
+                        item.setLastBooking(lastBooking);
+                        if (lastBooking != nextBooking) {
+                            item.setNextBooking(nextBooking);
+                        }
+                    }
+                    item.setComments(commentRepository.findCommentsByItemId(item.getId()));
+                })
+                .sorted(Comparator.comparingLong(Item::getId))
                 .collect(Collectors.toList());
+        return ItemMapper.getItemDtoList(itemDtoList);
     }
 
     @Transactional(readOnly = true)
@@ -107,10 +127,5 @@ public class ItemServiceImpl implements ItemService {
                 .collect(Collectors.toList())
                 : new ArrayList<>();
         return ItemMapper.getItemDtoList(items);
-    }
-
-    @Transactional
-    public void deleteItemById(long itemId) {
-        itemRepository.deleteById(itemId);
     }
 }

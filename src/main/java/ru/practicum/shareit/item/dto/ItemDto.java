@@ -19,17 +19,8 @@ public class ItemDto {
     private String description;
     private Boolean available;
     private Long ownerId; // владелец вещи
-    private Long request; // если вещь была создана по запросу другого пользователя, то в этом поле будет храниться ссылка на соответствующий запрос
+    private Long requestId; // если вещь была создана по запросу другого пользователя, то в этом поле будет храниться ссылка на соответствующий запрос
     private LastAndNextBookingDto lastBooking;
     private LastAndNextBookingDto nextBooking;
     private List<Comment> comments;
-
-    public ItemDto(long id, String name, String description, Boolean available, Long owner, Long request) {
-        this.id = id;
-        this.name = name;
-        this.description = description;
-        this.available = available;
-        this.ownerId = owner;
-        this.request = request;
-    }
 }

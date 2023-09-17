@@ -9,16 +9,28 @@ import java.util.stream.Collectors;
 
 public class ItemMapper {
     public static ItemDto itemDto(Item item) {
+        if (item.getRequest() == null) {
+            return ItemDto.builder()
+                    .id(item.getId())
+                    .name(item.getName())
+                    .description(item.getDescription())
+                    .available(item.getAvailable())
+                    .ownerId(item.getOwner().getId())
+                    .lastBooking(item.getLastBooking() != null ? BookingMapper.toLastAndNextBookingDto(item.getLastBooking()) : null)
+                    .nextBooking(item.getNextBooking() != null ? BookingMapper.toLastAndNextBookingDto(item.getNextBooking()) : null)
+                    .comments(item.getComments())
+                    .build();
+        }
         return ItemDto.builder()
                 .id(item.getId())
                 .name(item.getName())
                 .description(item.getDescription())
                 .available(item.getAvailable())
                 .ownerId(item.getOwner().getId())
-                .request(null)
                 .lastBooking(item.getLastBooking() != null ? BookingMapper.toLastAndNextBookingDto(item.getLastBooking()) : null)
                 .nextBooking(item.getNextBooking() != null ? BookingMapper.toLastAndNextBookingDto(item.getNextBooking()) : null)
                 .comments(item.getComments())
+                .requestId(item.getRequest().getId())
                 .build();
     }
 
@@ -39,18 +51,30 @@ public class ItemMapper {
                 .collect(Collectors.toList());
     }
 
-
     public static ItemDto itemDtoForResponse(Item item) {
-        return ItemDto.builder()
-                .id(item.getId())
-                .name(item.getName())
-                .description(item.getDescription())
-                .available(item.getAvailable())
-                .ownerId(item.getOwner().getId())
-                // .request(item.getRequest())
-                .lastBooking(item.getLastBooking() != null ? BookingMapper.toLastAndNextBookingDto(item.getLastBooking()) : null)
-                .nextBooking(item.getNextBooking() != null ? BookingMapper.toLastAndNextBookingDto(item.getNextBooking()) : null)
-                .comments(item.getComments())
-                .build();
+        if (item.getRequest() == null) {
+            return ItemDto.builder()
+                    .id(item.getId())
+                    .name(item.getName())
+                    .description(item.getDescription())
+                    .available(item.getAvailable())
+                    .ownerId(item.getOwner().getId())
+                    .lastBooking(item.getLastBooking() != null ? BookingMapper.toLastAndNextBookingDto(item.getLastBooking()) : null)
+                    .nextBooking(item.getNextBooking() != null ? BookingMapper.toLastAndNextBookingDto(item.getNextBooking()) : null)
+                    .comments(item.getComments())
+                    .build();
+        } else {
+            return ItemDto.builder()
+                    .id(item.getId())
+                    .name(item.getName())
+                    .description(item.getDescription())
+                    .available(item.getAvailable())
+                    .ownerId(item.getOwner().getId())
+                    .requestId(item.getRequest().getId())
+                    .lastBooking(item.getLastBooking() != null ? BookingMapper.toLastAndNextBookingDto(item.getLastBooking()) : null)
+                    .nextBooking(item.getNextBooking() != null ? BookingMapper.toLastAndNextBookingDto(item.getNextBooking()) : null)
+                    .comments(item.getComments())
+                    .build();
+        }
     }
 }
