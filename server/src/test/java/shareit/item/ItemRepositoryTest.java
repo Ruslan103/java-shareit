@@ -1,5 +1,6 @@
-package ru.practicum.shareit.item;
+package shareit.item;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -93,14 +94,14 @@ class ItemRepositoryTest {
     void getItemsByDescription() {
         List<Item> items = new ArrayList<>(itemRepository.findByDescriptionContainingIgnoreCase("Description"));
         assertEquals(1, items.size());
-        assertEquals("Name", items.get(0).getName());
+        Assertions.assertEquals("Name", items.get(0).getName());
     }
 
     @Test
     void findByRequestId() {
         List<Item> items = new ArrayList<>(itemRepository.findByRequestId(1));
         assertNotNull(items);
-        assertEquals(item.getRequest().getId(), items.get(0).getId());
+        Assertions.assertEquals(item.getRequest().getId(), items.get(0).getId());
         assertEquals(1, items.size());
     }
 }

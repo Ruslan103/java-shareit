@@ -1,5 +1,6 @@
-package ru.practicum.shareit.request;
+package shareit.request;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -123,7 +124,7 @@ public class RequestServiceTest {
         when(userRepository.existsById(anyLong())).thenReturn(true);
         when(itemRequestRepository.save(any(ItemRequest.class))).thenReturn(itemRequest);
         ItemRequestDto itemRequestDtoTest = itemRequestService.addItemRequest(1, itemRequestDto);
-        assertEquals(itemRequestDtoTest.getId(), itemRequestDto.getId());
+        Assertions.assertEquals(itemRequestDtoTest.getId(), itemRequestDto.getId());
     }
 
     @Test
@@ -146,7 +147,7 @@ public class RequestServiceTest {
         List<ItemRequest> itemRequestsDto = List.of(itemRequest, itemRequest2);
         List<ItemRequestDto> itemRequestsDtoTest = itemRequestService.getItemRequests(1);
         assertEquals(itemRequestsDto.size(), itemRequestsDtoTest.size());
-        assertEquals(itemRequestsDto.get(0).getId(), itemRequestsDtoTest.get(0).getId());
+        Assertions.assertEquals(itemRequestsDto.get(0).getId(), itemRequestsDtoTest.get(0).getId());
     }
 
     @Test
@@ -173,7 +174,7 @@ public class RequestServiceTest {
         when(itemRequestRepository.existsById(anyLong())).thenReturn(true);
         when(itemRequestRepository.getReferenceById(anyLong())).thenReturn(itemRequest);
         ItemRequestDto itemRequestDtoTest = itemRequestService.getItemRequestById(1, 1);
-        assertEquals(itemRequestDtoTest.getId(), itemRequest.getId());
+        Assertions.assertEquals(itemRequestDtoTest.getId(), itemRequest.getId());
     }
 
     @Test

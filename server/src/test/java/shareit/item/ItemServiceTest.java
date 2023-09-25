@@ -1,6 +1,7 @@
-package ru.practicum.shareit.item;
+package shareit.item;
 
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -145,12 +146,12 @@ public class ItemServiceTest {
         when(userRepository.existsById(anyLong())).thenReturn(true);
         when(itemRepository.save(any(Item.class))).thenReturn(item1);
         ItemDto itemDtoTest = itemService.addItemDto(1, itemDto1);
-        assertEquals(itemDtoTest.getId(), itemDto1.getId());
-        assertEquals(itemDtoTest.getName(), itemDto1.getName());
-        assertEquals(itemDtoTest.getRequestId(), itemDto1.getRequestId());
-        assertEquals(itemDtoTest.getDescription(), itemDto1.getDescription());
-        assertEquals(itemDtoTest.getAvailable(), itemDto1.getAvailable());
-        assertEquals(itemDtoTest.getComments(), itemDto1.getComments());
+        Assertions.assertEquals(itemDtoTest.getId(), itemDto1.getId());
+        Assertions.assertEquals(itemDtoTest.getName(), itemDto1.getName());
+        Assertions.assertEquals(itemDtoTest.getRequestId(), itemDto1.getRequestId());
+        Assertions.assertEquals(itemDtoTest.getDescription(), itemDto1.getDescription());
+        Assertions.assertEquals(itemDtoTest.getAvailable(), itemDto1.getAvailable());
+        Assertions.assertEquals(itemDtoTest.getComments(), itemDto1.getComments());
     }
 
     @Test
@@ -185,8 +186,8 @@ public class ItemServiceTest {
         item1.setAvailable(true);
         item1.setName("NewItem1Name");
         ItemDto updateItem = itemService.updateItem(1, 1, itemDto1);
-        assertEquals(item1.getName(), updateItem.getName());
-        assertEquals(item1.getAvailable(), updateItem.getAvailable());
+        Assertions.assertEquals(item1.getName(), updateItem.getName());
+        Assertions.assertEquals(item1.getAvailable(), updateItem.getAvailable());
     }
 
     @Test
@@ -201,7 +202,7 @@ public class ItemServiceTest {
         when(itemRepository.getReferenceById(anyLong())).thenReturn(item1);
         when(commentRepository.findCommentsByItemId(anyLong())).thenReturn(List.of(comment));
         ItemDto itemTest = itemService.getItemById(1, 1);
-        assertEquals(itemTest.getId(), 1);
+        Assertions.assertEquals(itemTest.getId(), 1);
     }
 
     @Test
@@ -215,7 +216,7 @@ public class ItemServiceTest {
         when(bookingRepository.findFirstByItemAndStatusIsInAndEndAfterOrderByStartAsc(any(Item.class), anyList(), any(LocalDateTime.class)))
                 .thenReturn(booking2);
         ItemDto itemTest = itemService.getItemById(1, 1);
-        assertEquals(itemTest.getId(), 1);
+        Assertions.assertEquals(itemTest.getId(), 1);
     }
 
     @Test
@@ -230,7 +231,7 @@ public class ItemServiceTest {
         when(itemRepository.getItemByOwner(any(User.class))).thenReturn(List.of(item1, item2));
         List<ItemDto> itemListTest = List.of(itemDto1, itemDto2);
         List<ItemDto> itemList = itemService.getItems(1L);
-        assertEquals(itemListTest.get(1).getId(), itemList.get(1).getId());
+        Assertions.assertEquals(itemListTest.get(1).getId(), itemList.get(1).getId());
         assertEquals(itemListTest.size(), itemList.size());
     }
 

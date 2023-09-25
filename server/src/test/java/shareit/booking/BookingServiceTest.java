@@ -1,5 +1,6 @@
-package ru.practicum.shareit.booking;
+package shareit.booking;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -141,7 +142,7 @@ public class BookingServiceTest {
         when(itemRepository.getReferenceById(anyLong())).thenReturn(item2);
         when(bookingRepository.save(any(Booking.class))).thenReturn(booking1);
         BookingDtoResponse bookingDtoResponse = bookingService.addBooking(user1.getId(), bookingDtoRequest);
-        assertEquals(booking1.getId(), bookingDtoResponse.getId());
+        Assertions.assertEquals(booking1.getId(), bookingDtoResponse.getId());
     }
 
     @Test
@@ -207,7 +208,7 @@ public class BookingServiceTest {
         when(bookingRepository.save(any(Booking.class))).thenReturn(booking1);
         BookingDtoResponse bookingDtoResponse = bookingService.updateBooking(1, 1, true);
         booking1.setStatus(Status.APPROVED);
-        assertEquals(bookingDtoResponse.getStatus(), Status.APPROVED);
+        Assertions.assertEquals(bookingDtoResponse.getStatus(), Status.APPROVED);
     }
 
     @Test
@@ -215,7 +216,7 @@ public class BookingServiceTest {
         when(bookingRepository.getReferenceById(anyLong())).thenReturn(booking1);
         when(bookingRepository.save(any(Booking.class))).thenReturn(booking1);
         BookingDtoResponse bookingDtoResponse = bookingService.updateBooking(1, 1, false);
-        assertEquals(bookingDtoResponse.getStatus(), Status.REJECTED);
+        Assertions.assertEquals(bookingDtoResponse.getStatus(), Status.REJECTED);
     }
 
     @Test
@@ -236,7 +237,7 @@ public class BookingServiceTest {
     void getBookingById() {
         when(bookingRepository.findBookingByIdAndUser(1, 1)).thenReturn(booking1);
         BookingDtoResponse bookingDtoResponse = bookingService.getBookingById(1, 1);
-        assertEquals(bookingDtoResponse.getId(), booking1.getId());
+        Assertions.assertEquals(bookingDtoResponse.getId(), booking1.getId());
     }
 
     @Test
@@ -252,8 +253,8 @@ public class BookingServiceTest {
         List<BookingDtoResponse> bookingDtoResponseList = bookingService.findBookingsByBookerAndStatus(1, "ALL", 1, 5);
         List<Booking> bookingDtoResponseListTest = List.of(booking1, booking2);
         assertEquals(bookingDtoResponseList.size(), bookingDtoResponseListTest.size());
-        assertEquals(bookingDtoResponseList.get(0).getId(), bookingDtoResponseListTest.get(0).getId());
-        assertEquals(bookingDtoResponseList.get(1).getId(), bookingDtoResponseListTest.get(1).getId());
+        Assertions.assertEquals(bookingDtoResponseList.get(0).getId(), bookingDtoResponseListTest.get(0).getId());
+        Assertions.assertEquals(bookingDtoResponseList.get(1).getId(), bookingDtoResponseListTest.get(1).getId());
     }
 
     @Test
@@ -264,8 +265,8 @@ public class BookingServiceTest {
         List<BookingDtoResponse> bookingDtoResponseList = bookingService.findBookingsByBookerAndStatus(1, "FUTURE", 1, 5);
         List<Booking> bookingDtoResponseListTest = List.of(booking1, booking2);
         assertEquals(bookingDtoResponseList.size(), bookingDtoResponseListTest.size());
-        assertEquals(bookingDtoResponseList.get(0).getId(), bookingDtoResponseListTest.get(0).getId());
-        assertEquals(bookingDtoResponseList.get(1).getId(), bookingDtoResponseListTest.get(1).getId());
+        Assertions.assertEquals(bookingDtoResponseList.get(0).getId(), bookingDtoResponseListTest.get(0).getId());
+        Assertions.assertEquals(bookingDtoResponseList.get(1).getId(), bookingDtoResponseListTest.get(1).getId());
     }
 
     @Test
@@ -276,8 +277,8 @@ public class BookingServiceTest {
         List<BookingDtoResponse> bookingDtoResponseList = bookingService.findBookingsByBookerAndStatus(1, "WAITING", 1, 5);
         List<Booking> bookingDtoResponseListTest = List.of(booking1, booking2);
         assertEquals(bookingDtoResponseList.size(), bookingDtoResponseListTest.size());
-        assertEquals(bookingDtoResponseList.get(0).getId(), bookingDtoResponseListTest.get(0).getId());
-        assertEquals(bookingDtoResponseList.get(1).getId(), bookingDtoResponseListTest.get(1).getId());
+        Assertions.assertEquals(bookingDtoResponseList.get(0).getId(), bookingDtoResponseListTest.get(0).getId());
+        Assertions.assertEquals(bookingDtoResponseList.get(1).getId(), bookingDtoResponseListTest.get(1).getId());
     }
 
     @Test
@@ -288,8 +289,8 @@ public class BookingServiceTest {
         List<BookingDtoResponse> bookingDtoResponseList = bookingService.findBookingsByBookerAndStatus(1, "REJECTED", 1, 5);
         List<Booking> bookingDtoResponseListTest = List.of(booking1, booking2);
         assertEquals(bookingDtoResponseList.size(), bookingDtoResponseListTest.size());
-        assertEquals(bookingDtoResponseList.get(0).getId(), bookingDtoResponseListTest.get(0).getId());
-        assertEquals(bookingDtoResponseList.get(1).getId(), bookingDtoResponseListTest.get(1).getId());
+        Assertions.assertEquals(bookingDtoResponseList.get(0).getId(), bookingDtoResponseListTest.get(0).getId());
+        Assertions.assertEquals(bookingDtoResponseList.get(1).getId(), bookingDtoResponseListTest.get(1).getId());
     }
 
     @Test
@@ -302,8 +303,8 @@ public class BookingServiceTest {
         List<BookingDtoResponse> bookingDtoResponseList = bookingService.findBookingsByBookerAndStatus(1, "CURRENT", 1, 5);
         List<Booking> bookingDtoResponseListTest = List.of(booking1, booking2);
         assertEquals(bookingDtoResponseList.size(), bookingDtoResponseListTest.size());
-        assertEquals(bookingDtoResponseList.get(0).getId(), bookingDtoResponseListTest.get(0).getId());
-        assertEquals(bookingDtoResponseList.get(1).getId(), bookingDtoResponseListTest.get(1).getId());
+        Assertions.assertEquals(bookingDtoResponseList.get(0).getId(), bookingDtoResponseListTest.get(0).getId());
+        Assertions.assertEquals(bookingDtoResponseList.get(1).getId(), bookingDtoResponseListTest.get(1).getId());
     }
 
     @Test
@@ -316,8 +317,8 @@ public class BookingServiceTest {
         List<BookingDtoResponse> bookingDtoResponseList = bookingService.findBookingsByBookerAndStatus(1, "PAST", 1, 5);
         List<Booking> bookingDtoResponseListTest = List.of(booking1, booking2);
         assertEquals(bookingDtoResponseList.size(), bookingDtoResponseListTest.size());
-        assertEquals(bookingDtoResponseList.get(0).getId(), bookingDtoResponseListTest.get(0).getId());
-        assertEquals(bookingDtoResponseList.get(1).getId(), bookingDtoResponseListTest.get(1).getId());
+        Assertions.assertEquals(bookingDtoResponseList.get(0).getId(), bookingDtoResponseListTest.get(0).getId());
+        Assertions.assertEquals(bookingDtoResponseList.get(1).getId(), bookingDtoResponseListTest.get(1).getId());
     }
 
     @Test
@@ -339,8 +340,8 @@ public class BookingServiceTest {
         List<BookingDtoResponse> bookingDtoResponseList = bookingService.findBookingsByOwnerAndStatus(1, "ALL", 1, 5);
         List<Booking> bookingDtoResponseListTest = List.of(booking1, booking2);
         assertEquals(bookingDtoResponseListTest.size(), bookingDtoResponseList.size());
-        assertEquals(bookingDtoResponseList.get(0).getId(), bookingDtoResponseListTest.get(0).getId());
-        assertEquals(bookingDtoResponseList.get(1).getId(), bookingDtoResponseListTest.get(1).getId());
+        Assertions.assertEquals(bookingDtoResponseList.get(0).getId(), bookingDtoResponseListTest.get(0).getId());
+        Assertions.assertEquals(bookingDtoResponseList.get(1).getId(), bookingDtoResponseListTest.get(1).getId());
     }
 
     @Test
@@ -362,8 +363,8 @@ public class BookingServiceTest {
         List<BookingDtoResponse> bookingDtoResponseList = bookingService.findBookingsByOwnerAndStatus(1, "FUTURE", 1, 5);
         List<Booking> bookingDtoResponseListTest = List.of(booking1, booking2);
         assertEquals(bookingDtoResponseListTest.size(), bookingDtoResponseList.size());
-        assertEquals(bookingDtoResponseList.get(0).getId(), bookingDtoResponseListTest.get(0).getId());
-        assertEquals(bookingDtoResponseList.get(1).getId(), bookingDtoResponseListTest.get(1).getId());
+        Assertions.assertEquals(bookingDtoResponseList.get(0).getId(), bookingDtoResponseListTest.get(0).getId());
+        Assertions.assertEquals(bookingDtoResponseList.get(1).getId(), bookingDtoResponseListTest.get(1).getId());
     }
 
     @Test
@@ -373,8 +374,8 @@ public class BookingServiceTest {
         List<BookingDtoResponse> bookingDtoResponseList = bookingService.findBookingsByOwnerAndStatus(1, "WAITING", 1, 5);
         List<Booking> bookingDtoResponseListTest = List.of(booking1, booking2);
         assertEquals(bookingDtoResponseListTest.size(), bookingDtoResponseList.size());
-        assertEquals(bookingDtoResponseList.get(0).getId(), bookingDtoResponseListTest.get(0).getId());
-        assertEquals(bookingDtoResponseList.get(1).getId(), bookingDtoResponseListTest.get(1).getId());
+        Assertions.assertEquals(bookingDtoResponseList.get(0).getId(), bookingDtoResponseListTest.get(0).getId());
+        Assertions.assertEquals(bookingDtoResponseList.get(1).getId(), bookingDtoResponseListTest.get(1).getId());
     }
 
     @Test
@@ -384,8 +385,8 @@ public class BookingServiceTest {
         List<BookingDtoResponse> bookingDtoResponseList = bookingService.findBookingsByOwnerAndStatus(1, "REJECTED", 1, 5);
         List<Booking> bookingDtoResponseListTest = List.of(booking1, booking2);
         assertEquals(bookingDtoResponseListTest.size(), bookingDtoResponseList.size());
-        assertEquals(bookingDtoResponseList.get(0).getId(), bookingDtoResponseListTest.get(0).getId());
-        assertEquals(bookingDtoResponseList.get(1).getId(), bookingDtoResponseListTest.get(1).getId());
+        Assertions.assertEquals(bookingDtoResponseList.get(0).getId(), bookingDtoResponseListTest.get(0).getId());
+        Assertions.assertEquals(bookingDtoResponseList.get(1).getId(), bookingDtoResponseListTest.get(1).getId());
     }
 
     @Test
@@ -399,8 +400,8 @@ public class BookingServiceTest {
         List<BookingDtoResponse> bookingDtoResponseList = bookingService.findBookingsByOwnerAndStatus(1, "CURRENT", 1, 5);
         List<Booking> bookingDtoResponseListTest = List.of(booking1, booking2);
         assertEquals(bookingDtoResponseList.size(), bookingDtoResponseListTest.size());
-        assertEquals(bookingDtoResponseList.get(0).getId(), bookingDtoResponseListTest.get(0).getId());
-        assertEquals(bookingDtoResponseList.get(1).getId(), bookingDtoResponseListTest.get(1).getId());
+        Assertions.assertEquals(bookingDtoResponseList.get(0).getId(), bookingDtoResponseListTest.get(0).getId());
+        Assertions.assertEquals(bookingDtoResponseList.get(1).getId(), bookingDtoResponseListTest.get(1).getId());
     }
 
     @Test
@@ -414,7 +415,7 @@ public class BookingServiceTest {
         List<BookingDtoResponse> bookingDtoResponseList = bookingService.findBookingsByOwnerAndStatus(1, "PAST", 1, 5);
         List<Booking> bookingDtoResponseListTest = List.of(booking1, booking2);
         assertEquals(bookingDtoResponseList.size(), bookingDtoResponseListTest.size());
-        assertEquals(bookingDtoResponseList.get(0).getId(), bookingDtoResponseListTest.get(0).getId());
-        assertEquals(bookingDtoResponseList.get(1).getId(), bookingDtoResponseListTest.get(1).getId());
+        Assertions.assertEquals(bookingDtoResponseList.get(0).getId(), bookingDtoResponseListTest.get(0).getId());
+        Assertions.assertEquals(bookingDtoResponseList.get(1).getId(), bookingDtoResponseListTest.get(1).getId());
     }
 }

@@ -1,6 +1,7 @@
-package ru.practicum.shareit.request;
+package shareit.request;
 
 import lombok.RequiredArgsConstructor;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -88,7 +89,7 @@ public class ItemRequestIntegrationTest {
                 .setParameter("id", 1L)
                 .getSingleResult();
         assertNotNull(queryRequest);
-        assertEquals("Description", queryRequest.getDescription());
-        assertEquals(request.getRequester().getId(), queryRequest.getRequester().getId());
+        Assertions.assertEquals("Description", queryRequest.getDescription());
+        Assertions.assertEquals(request.getRequester().getId(), queryRequest.getRequester().getId());
     }
 }

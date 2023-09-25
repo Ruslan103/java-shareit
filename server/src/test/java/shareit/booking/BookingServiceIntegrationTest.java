@@ -1,6 +1,7 @@
-package ru.practicum.shareit.booking;
+package shareit.booking;
 
 import lombok.RequiredArgsConstructor;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -89,7 +90,7 @@ public class BookingServiceIntegrationTest {
                 .setParameter("id", 1L)
                 .getSingleResult();
         assertNotNull(queryBooking);
-        assertEquals(Status.WAITING, queryBooking.getStatus());
+        Assertions.assertEquals(Status.WAITING, queryBooking.getStatus());
     }
 
     @Test
@@ -99,7 +100,7 @@ public class BookingServiceIntegrationTest {
         itemService.addItemDto(2, ItemMapper.itemDto(item));
         bookingService.addBooking(1L, BookingMapper.toBookingDtoRequest(booking));
         BookingDtoResponse result = bookingService.getBookingById(1L, 1L);
-        assertEquals(Status.WAITING, result.getStatus());
-        assertEquals(booking.getEnd(), result.getEnd());
+        Assertions.assertEquals(Status.WAITING, result.getStatus());
+        Assertions.assertEquals(booking.getEnd(), result.getEnd());
     }
 }

@@ -1,6 +1,7 @@
-package ru.practicum.shareit.request;
+package shareit.request;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +11,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.request.controller.ItemRequestController;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
@@ -130,8 +133,8 @@ class ItemRequestControllerTest {
                         .accept(MediaType.APPLICATION_JSON)
                         .header("X-Sharer-User-Id", 1))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id", is(itemRequestDto1.getId()), Long.class))
-                .andExpect(jsonPath("$.description", is(itemRequestDto1.getDescription()), String.class));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.id", Matchers.is(itemRequestDto1.getId()), Long.class))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.description", Matchers.is(itemRequestDto1.getDescription()), String.class));
 
         verify(itemRequestService, times(1)).addItemRequest(1, itemRequestDto1);
     }
@@ -167,14 +170,14 @@ class ItemRequestControllerTest {
     void getRequestById() throws Exception {
         when(itemRequestService.getItemRequestById(anyLong(), anyLong())).thenReturn(itemRequestDto2);
 
-        mvc.perform(get("/requests/{requestId}", itemRequestDto2.getId())
+        mvc.perform(MockMvcRequestBuilders.get("/requests/{requestId}", itemRequestDto2.getId())
                         .content(mapper.writeValueAsString(itemRequestDto1))
                         .characterEncoding(StandardCharsets.UTF_8)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
                         .header("X-Sharer-User-Id", 1))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id", is(itemRequestDto2.getId()), Long.class))
-                .andExpect(jsonPath("$.description", is(itemRequestDto2.getDescription()), String.class));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.id", Matchers.is(itemRequestDto2.getId()), Long.class))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.description", Matchers.is(itemRequestDto2.getDescription()), String.class));
     }
 }

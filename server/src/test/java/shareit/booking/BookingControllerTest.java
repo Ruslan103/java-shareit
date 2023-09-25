@@ -1,6 +1,7 @@
-package ru.practicum.shareit.booking;
+package shareit.booking;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +11,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import ru.practicum.shareit.booking.controller.BookingController;
 import ru.practicum.shareit.booking.dto.BookingDtoRequest;
 import ru.practicum.shareit.booking.dto.BookingDtoResponse;
@@ -125,10 +127,10 @@ class BookingControllerTest {
                         .accept(MediaType.APPLICATION_JSON)
                         .header("X-Sharer-User-Id", 3))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id", is(bookingDto.getId()), Long.class))
-                .andExpect(jsonPath("$.status", is(bookingDto.getStatus().toString()), Status.class))
-                .andExpect(jsonPath("$.booker.id", is(bookingDto.getBooker().getId()), Long.class))
-                .andExpect(jsonPath("$.item.id", is(bookingDto.getItem().getId()), Long.class));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.id", Matchers.is(bookingDto.getId()), Long.class))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.status", Matchers.is(bookingDto.getStatus().toString()), Status.class))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.booker.id", Matchers.is(bookingDto.getBooker().getId()), Long.class))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.item.id", Matchers.is(bookingDto.getItem().getId()), Long.class));
 
         verify(bookingService, times(1)).addBooking(3, bookingDtoRequest);
     }
@@ -144,10 +146,10 @@ class BookingControllerTest {
                         .accept(MediaType.APPLICATION_JSON)
                         .header("X-Sharer-User-Id", 1))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id", is(bookingDto.getId()), Long.class))
-                .andExpect(jsonPath("$.status", is(bookingDto.getStatus().toString()), Status.class))
-                .andExpect(jsonPath("$.booker.id", is(bookingDto.getBooker().getId()), Long.class))
-                .andExpect(jsonPath("$.item.id", is(bookingDto.getItem().getId()), Long.class));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.id", Matchers.is(bookingDto.getId()), Long.class))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.status", Matchers.is(bookingDto.getStatus().toString()), Status.class))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.booker.id", Matchers.is(bookingDto.getBooker().getId()), Long.class))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.item.id", Matchers.is(bookingDto.getItem().getId()), Long.class));
 
         verify(bookingService, times(1)).updateBooking(1L, 1L, true);
     }
@@ -162,10 +164,10 @@ class BookingControllerTest {
                         .accept(MediaType.APPLICATION_JSON)
                         .header("X-Sharer-User-Id", 1))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id", is(bookingDto.getId()), Long.class))
-                .andExpect(jsonPath("$.status", is(bookingDto.getStatus().toString()), Status.class))
-                .andExpect(jsonPath("$.booker.id", is(bookingDto.getBooker().getId()), Long.class))
-                .andExpect(jsonPath("$.item.id", is(bookingDto.getItem().getId()), Long.class));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.id", Matchers.is(bookingDto.getId()), Long.class))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.status", Matchers.is(bookingDto.getStatus().toString()), Status.class))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.booker.id", Matchers.is(bookingDto.getBooker().getId()), Long.class))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.item.id", Matchers.is(bookingDto.getItem().getId()), Long.class));
 
         verify(bookingService, times(1)).getBookingById(1, 1);
     }

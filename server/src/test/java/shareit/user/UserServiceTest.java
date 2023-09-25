@@ -1,6 +1,7 @@
-package ru.practicum.shareit.user;
+package shareit.user;
 
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -60,9 +61,9 @@ public class UserServiceTest {
     void addUserTest() {
         when(userRepository.save(any(User.class))).thenReturn(user1);
         UserDto userDtoTest = userService.addUser(userDto1);
-        assertEquals(userDtoTest.getId(), userDto1.getId());
-        assertEquals(userDtoTest.getName(), userDto1.getName());
-        assertEquals(userDtoTest.getEmail(), userDto1.getEmail());
+        Assertions.assertEquals(userDtoTest.getId(), userDto1.getId());
+        Assertions.assertEquals(userDtoTest.getName(), userDto1.getName());
+        Assertions.assertEquals(userDtoTest.getEmail(), userDto1.getEmail());
         verify(userRepository, times(1)).save(user1);
     }
 
@@ -77,7 +78,7 @@ public class UserServiceTest {
         user1.setName("NewName");
         when(userRepository.save(any(User.class))).thenReturn(user1);
         UserDto userDtoTest = userService.updateUser(1, userDto1);
-        assertEquals(userDtoTest.getName(), "NewName");
+        Assertions.assertEquals(userDtoTest.getName(), "NewName");
         verify(userRepository, times(1)).save(user1);
     }
 
@@ -98,7 +99,7 @@ public class UserServiceTest {
         userDto1.setEmail(null);
         userDto1.setName(null);
         UserDto userDtoTest = userService.updateUser(1, userDto1);
-        assertEquals(userDtoTest.getName(), "NewName");
+        Assertions.assertEquals(userDtoTest.getName(), "NewName");
         verify(userRepository, times(1)).save(user1);
     }
 
@@ -113,9 +114,9 @@ public class UserServiceTest {
         when(userRepository.existsById(anyLong())).thenReturn(true);
         when(userRepository.getReferenceById(anyLong())).thenReturn(user1);
         UserDto userTest = userService.getUserById(1);
-        assertEquals(user1.getId(), userTest.getId());
-        assertEquals(user1.getName(), userTest.getName());
-        assertEquals(user1.getEmail(), userTest.getEmail());
+        Assertions.assertEquals(user1.getId(), userTest.getId());
+        Assertions.assertEquals(user1.getName(), userTest.getName());
+        Assertions.assertEquals(user1.getEmail(), userTest.getEmail());
     }
 
     @Test

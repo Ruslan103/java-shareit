@@ -1,6 +1,7 @@
-package ru.practicum.shareit.user;
+package shareit.user;
 
 import lombok.RequiredArgsConstructor;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.TestPropertySource;
@@ -39,7 +40,7 @@ public class UserServiceIntegrationTest {
         User queryUser = query
                 .setParameter("id", user.getId())
                 .getSingleResult();
-        assertEquals(UserMapper.toUser(user), queryUser);
+        Assertions.assertEquals(UserMapper.toUser(user), queryUser);
     }
 
     @Test
@@ -59,6 +60,6 @@ public class UserServiceIntegrationTest {
         List<User> allUsers = em.createQuery("SELECT u FROM User u", User.class)
                 .getResultList();
         assertEquals(2, allUsers.size());
-        assertEquals(UserMapper.toUser(user1), allUsers.get(0));
+        Assertions.assertEquals(UserMapper.toUser(user1), allUsers.get(0));
     }
 }

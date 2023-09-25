@@ -1,5 +1,6 @@
-package ru.practicum.shareit.item;
+package shareit.item;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -126,8 +127,8 @@ public class CommentServiceTest {
         when(bookingRepository.isBookerAndItemExist(any(User.class), any(Item.class), anyList())).thenReturn(true);
         when(commentRepository.save(any(Comment.class))).thenReturn(comment);
         CommentDto commentDto1 = commentService.addComment(1, 1, comment);
-        assertEquals(commentDto1.getId(), 1);
-        assertEquals(commentDto1.getText(), "commentText");
+        Assertions.assertEquals(commentDto1.getId(), 1);
+        Assertions.assertEquals(commentDto1.getText(), "commentText");
     }
 
     @Test

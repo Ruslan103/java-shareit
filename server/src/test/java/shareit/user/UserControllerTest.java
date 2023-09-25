@@ -1,6 +1,7 @@
-package ru.practicum.shareit.user;
+package shareit.user;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +9,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import ru.practicum.shareit.user.controller.UserController;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.dto.UserMapper;
@@ -66,9 +68,9 @@ public class UserControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id", is(userDto1.getId()), Long.class))
-                .andExpect(jsonPath("$.name", is(userDto1.getName()), String.class))
-                .andExpect(jsonPath("$.email", is(userDto1.getEmail()), String.class));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.id", Matchers.is(userDto1.getId()), Long.class))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.name", Matchers.is(userDto1.getName()), String.class))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.email", Matchers.is(userDto1.getEmail()), String.class));
         verify(userService, times(1)).addUser(userDto1);
     }
 
@@ -81,9 +83,9 @@ public class UserControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id", is(userDto1.getId()), Long.class))
-                .andExpect(jsonPath("$.name", is(userDto1.getName()), String.class))
-                .andExpect(jsonPath("$.email", is(userDto1.getEmail()), String.class));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.id", Matchers.is(userDto1.getId()), Long.class))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.name", Matchers.is(userDto1.getName()), String.class))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.email", Matchers.is(userDto1.getEmail()), String.class));
 
         verify(userService, times(1)).updateUser(1, userDto1);
     }
@@ -103,9 +105,9 @@ public class UserControllerTest {
         when(userService.getUserById(1)).thenReturn(userDto1);
         mvc.perform(get("/users/{userId}", 1))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id", is(userDto1.getId()), Long.class))
-                .andExpect(jsonPath("$.name", is(userDto1.getName()), String.class))
-                .andExpect(jsonPath("$.email", is(userDto1.getEmail()), String.class));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.id", Matchers.is(userDto1.getId()), Long.class))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.name", Matchers.is(userDto1.getName()), String.class))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.email", Matchers.is(userDto1.getEmail()), String.class));
         verify(userService, times(1)).getUserById(1);
     }
 

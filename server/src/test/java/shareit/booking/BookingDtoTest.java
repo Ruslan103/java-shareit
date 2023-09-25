@@ -1,4 +1,4 @@
-package ru.practicum.shareit.booking;
+package shareit.booking;
 
 
 import org.junit.jupiter.api.Test;
