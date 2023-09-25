@@ -5,18 +5,18 @@ services:
     image: gateway
     container_name: gateway
     ports:
-      - "8080:8080"
+      - "8081:8081"
     depends_on:
       - server
     environment:
-      - SHAREIT_SERVER_URL=http://server:9090
+      - SHAREIT_SERVER_URL=http://server:8080
 
   server:
     build: server
     image: server
     container_name: server
     ports:
-      - "9090:9090"
+      - "8080:8080"
     depends_on:
       - db
     environment:
