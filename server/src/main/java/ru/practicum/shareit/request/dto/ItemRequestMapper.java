@@ -1,8 +1,8 @@
 package ru.practicum.shareit.request.dto;
 
+import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.item.dto.ItemMapper;
 import ru.practicum.shareit.item.model.Item;
-import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.request.model.ItemRequest;
 import ru.practicum.shareit.user.repository.UserRepository;
 

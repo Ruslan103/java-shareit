@@ -7,7 +7,6 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import ru.practicum.shareit.ShareItServer;
 import ru.practicum.shareit.user.dto.UserDto;
-
 import ru.practicum.shareit.user.dto.UserMapper;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.service.UserService;
@@ -15,7 +14,6 @@ import ru.practicum.shareit.user.service.UserServiceImpl;
 
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
-
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
